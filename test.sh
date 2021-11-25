@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 cd $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-export PATH=$PATH:$(pwd)/bin
+export PATH=$PATH:$(pwd)/bin 
 
 if ! command -v ansi >/dev/null; then
   alias ansi=$(pwd)/ansi
@@ -49,6 +49,7 @@ test_builtin() {
 
 #test_builtin color color "$DEFAULT_POST_CMD"
 #test_builtin color color "for x in \$(seq 1 5); do echo -e \"TS=\$TS|MS=\$MS\"; sleep 2; done"
-test_builtin wg wg "wg"
+WIREGUARD_INTERFACE_NAME=wgtest10 test_builtin wg wg "wg"
+WIREGUARD_INTERFACE_NAME=wgtest11 test_builtin wg wg "wg"
 
 echo OK

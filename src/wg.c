@@ -57,16 +57,29 @@ void list_devices(void) {
 
 
 int wg_set_interface(list) WORD_LIST *list; {
+
   wg_peer new_peer = {
     .flags = WGPEER_HAS_PUBLIC_KEY | WGPEER_REPLACE_ALLOWEDIPS
   };
   wg_device new_device = {
-    .name = DEFAULT_WIREGUARD_INTERFACE_NAME,
+   // .name = &new_wg_interface_name,
     .listen_port = DEFAULT_WIREGUARD_LISTEN_PORT,
     .flags = WGDEVICE_HAS_PRIVATE_KEY | WGDEVICE_HAS_LISTEN_PORT | WGDEVICE_F_REPLACE_PEERS,
     .first_peer = &new_peer,
     .last_peer = &new_peer
   };
+
+    //char *new_wg_interface_name = "";
+    SHELL_VAR *wg_interface_name = find_variable("WIREGUARD_INTERFACE_NAME");
+    if (wg_interface_name != NULL){
+      char *ev = get_variable_value(wg_interface_name);
+      strcpy(new_device.name, ev);
+    }else{
+      strcpy(new_device.name, DEFAULT_WIREGUARD_INTERFACE_NAME);
+    }
+    fprintf(stderr, "Managing Wireguard Interface %s\n", new_device.name);
+
+//return 0;
 
   wg_key temp_private_key;
   wg_generate_private_key(temp_private_key);
