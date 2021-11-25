@@ -1,63 +1,103 @@
-/* Sample builtin to be dynamically loaded with enable -f and create a new
-   builtin. */
-
-/* Except for the included headers from "loadables.h" that have been
-   inline manually (loadables.h is part of the examples and is not
-   installe by bash, this is the same builtin example from the
-   loadables examples that is found in the bash sources
- */
-
-/*
-   Copyright (C) 1999-2009 Free Software Foundation, Inc.
-
-   This file is part of GNU Bash.
-   Bash is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   Bash is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with Bash.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
-
 #include <config.h>
-
 #if defined (HAVE_UNISTD_H)
 #  include <unistd.h>
 #endif
-
 #include <stdio.h>
-
 #include "builtins.h"
 #include "shell.h"
 #include "bashgetopt.h"
 #include "common.h"
 
+#include "wireguard.h"
+#include <string.h>
+#include <stdlib.h>
+#include "wireguard.c"
 
 
-/* A builtin `xxx' is normally implemented with an `xxx_builtin' function.
-   If you're converting a command that uses the normal Unix argc/argv
-   calling convention, use argv = make_builtin_argv (list, &argc) and call
-   the original `main' something like `xxx_main'.  Look at cat.c for an
-   example.
 
-   Builtins should use internal_getopt to parse options.  It is the same as
-   getopt(3), but it takes a WORD_LIST *.  Look at print.c for an example
-   of its use.
+bool wg_device_exists(char *device_name){
+    wg_device *device;
+    bool exists = (wg_get_device(&device, device_name) == 0);
+    free(device);
+    return exists;
+}
 
-   If the builtin takes no options, call no_options(list) before doing
-   anything else.  If it returns a non-zero value, your builtin should
-   immediately return EX_USAGE.  Look at logname.c for an example.
+void list_devices(void) {
+  char *device_names, *device_name;
+  size_t len;
 
-   A builtin command returns EXECUTION_SUCCESS for success and
-   EXECUTION_FAILURE to indicate failure. */
+  device_names = wg_list_device_names();
+  if (!device_names) {
+    perror("Unable to get device names");
+    exit(1);
+  }
+
+  wg_for_each_device_name(device_names, device_name, len) {
+    wg_device *device;
+    wg_peer *peer;
+    wg_key_b64_string key;
+
+    if (wg_get_device(&device, device_name) < 0) {
+      perror("Unable to get device");
+      continue;
+    }
+    if (device->flags & WGDEVICE_HAS_PUBLIC_KEY) {
+      wg_key_to_base64(key, device->public_key);
+      printf("%s has public key %s\n", device_name, key);
+    } else
+      printf("%s has no public key\n", device_name);
+    wg_for_each_peer(device, peer) {
+      wg_key_to_base64(key, peer->public_key);
+      printf(" - peer %s\n", key);
+    }
+    wg_free_device(device);
+  }
+  free(device_names);
+}
+
+
+int wg_set_interface(list) WORD_LIST *list; {
+  wg_peer new_peer = {
+    .flags = WGPEER_HAS_PUBLIC_KEY | WGPEER_REPLACE_ALLOWEDIPS
+  };
+  wg_device new_device = {
+    .name = DEFAULT_WIREGUARD_INTERFACE_NAME,
+    .listen_port = DEFAULT_WIREGUARD_LISTEN_PORT,
+    .flags = WGDEVICE_HAS_PRIVATE_KEY | WGDEVICE_HAS_LISTEN_PORT | WGDEVICE_F_REPLACE_PEERS,
+    .first_peer = &new_peer,
+    .last_peer = &new_peer
+  };
+
+  wg_key temp_private_key;
+  wg_generate_private_key(temp_private_key);
+  wg_generate_public_key(new_peer.public_key, temp_private_key);
+  wg_generate_private_key(new_device.private_key);
+
+  bool device_exists = wg_device_exists(new_device.name);
+  fprintf(stderr, "device %s exists? %s\n", new_device.name, device_exists ?  "true" : "false");
+
+  if (device_exists && RECREATE_WIREGUARD_INTERFACE){
+    if (wg_del_device(new_device.name) < 0) {
+      perror("Unable to delete device");
+      exit(1);
+    }
+  }else if(!device_exists){
+    if (wg_add_device(new_device.name) < 0) {
+        perror("Unable to add device");
+        exit(1);
+    }
+  }
+
+  if (wg_set_device(&new_device) < 0) {
+    perror("Unable to set device");
+    exit(1);
+  }
+
+  return 0;
+}
+
+
+
 int
 wg_builtin (list)
      WORD_LIST *list;
@@ -68,11 +108,13 @@ wg_builtin (list)
 }
 
 int
-wg_builtin_load (s)
-     char *s;
-{
+wg_builtin_load (s)     char *s; {
+
+
   printf ("wg builtin loaded\n");
   fflush (stdout);
+    wg_set_interface();
+    list_devices();
   return (1);
 }
 
@@ -84,9 +126,6 @@ wg_builtin_unload (s)
   fflush (stdout);
 }
 
-/* An array of strings forming the `long' documentation for a builtin xxx,
-   which is printed by `help xxx'.  It must end with a NULL.  By convention,
-   the first line is a short description. */
 char *wg_doc[] = {
 	"Sample builtin.",
 	"",
@@ -94,14 +133,11 @@ char *wg_doc[] = {
 	(char *)NULL
 };
 
-/* The standard structure describing a builtin command.  bash keeps an array
-   of these structures.  The flags must include BUILTIN_ENABLED so the
-   builtin can be used. */
 struct builtin wg_struct = {
-	"wg",		/* builtin name */
-	wg_builtin,		/* function implementing the builtin */
-	BUILTIN_ENABLED,	/* initial flags for builtin */
-	wg_doc,		/* array of long documentation strings. */
-	"wg",		/* usage synopsis; becomes short_doc */
-	0			/* reserved for internal use */
+	"wg",
+	wg_builtin,
+	BUILTIN_ENABLED,
+	wg_doc,
+	"wg",
+	0	
 };
