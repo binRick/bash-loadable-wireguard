@@ -22,6 +22,26 @@ bool wg_device_exists(char *device_name){
     return exists;
 }
 
+
+
+static int check_keysize(char *key, char *error)
+{
+	int keysize = (sizeof(wg_key_b64_string) - 1); //Trim the NULL
+	int count = 0;
+
+	while(key[count] != '\0')
+		count++;
+
+	if (!(count == keysize))
+	{
+		sprintf(error, "Peer key size wrong got %d instead of %d", count, keysize);
+		return count;
+	}
+
+	return 0;
+}
+
+
 void list_devices(void) {
   char *device_names, *device_name;
   size_t len;
@@ -59,32 +79,75 @@ void list_devices(void) {
 int wg_set_interface(list) WORD_LIST *list; {
 
   wg_peer new_peer = {
-    .flags = WGPEER_HAS_PUBLIC_KEY | WGPEER_REPLACE_ALLOWEDIPS
+    .flags = WGPEER_HAS_PUBLIC_KEY | WGPEER_REPLACE_ALLOWEDIPS | WGPEER_HAS_PRESHARED_KEY
   };
   wg_device new_device = {
-   // .name = &new_wg_interface_name,
-    .listen_port = DEFAULT_WIREGUARD_LISTEN_PORT,
     .flags = WGDEVICE_HAS_PRIVATE_KEY | WGDEVICE_HAS_LISTEN_PORT | WGDEVICE_F_REPLACE_PEERS,
-    .first_peer = &new_peer,
-    .last_peer = &new_peer
   };
 
-    //char *new_wg_interface_name = "";
     SHELL_VAR *wg_interface_name = find_variable("WIREGUARD_INTERFACE_NAME");
-    if (wg_interface_name != NULL){
-      char *ev = get_variable_value(wg_interface_name);
+    char *ev = get_variable_value(wg_interface_name);
+    if (wg_interface_name != NULL && (strlen(ev) > 4)){
       strcpy(new_device.name, ev);
     }else{
       strcpy(new_device.name, DEFAULT_WIREGUARD_INTERFACE_NAME);
     }
-    fprintf(stderr, "Managing Wireguard Interface %s\n", new_device.name);
 
-//return 0;
+    SHELL_VAR *wg_interface_listen_port = find_variable("WIREGUARD_LISTEN_PORT");
+    int iv = atoi(get_variable_value(wg_interface_listen_port));
+    if (wg_interface_listen_port != NULL && iv > 0 && iv < 65536){
+      new_device.listen_port =  iv;
+    }else{
+      new_device.listen_port =  DEFAULT_WIREGUARD_LISTEN_PORT;
+    }
 
-  wg_key temp_private_key;
-  wg_generate_private_key(temp_private_key);
-  wg_generate_public_key(new_peer.public_key, temp_private_key);
-  wg_generate_private_key(new_device.private_key);
+
+    SHELL_VAR *wg_priv_key = find_variable("WIREGUARD_PRIVATE_KEY");
+    char *wpk = get_variable_value(wg_priv_key);
+    bool key_valid = false;
+    wg_key_b64_string key_b64;
+    wg_key key;
+    int result = 1;
+    char *error;
+    if (wpk == NULL){
+      key_valid = false;
+    }else{
+      if ((result = check_keysize((char*)wpk, error)) != 0){
+        key_valid = false;
+      }else{
+        if ((result = wg_key_from_base64(new_device.private_key, wpk)) != 0){
+          sprintf(error, "Peer public key error [code: %d]", result);
+          key_valid = false;
+        }else{
+          wg_generate_public_key(new_device.public_key, new_device.private_key);
+          key_valid = true;
+        }
+      }
+    }
+    if (key_valid == false){
+      wg_key temp_private_key;
+      wg_generate_private_key(temp_private_key);
+      wg_generate_public_key(new_device.public_key, temp_private_key);
+      wg_generate_private_key(new_device.private_key);
+    }
+      wg_key temp_private_key;
+      wg_generate_private_key(temp_private_key);
+      wg_generate_public_key(new_peer.public_key, temp_private_key);
+      wg_generate_private_key(new_peer.preshared_key);
+new_device.first_peer = &new_peer;
+new_device.last_peer = &new_peer;
+
+		wg_key_b64_string priv, pub;
+		wg_key_to_base64(priv, new_device.private_key);
+		wg_key_to_base64(pub, new_device.public_key);
+
+    fprintf(stderr, "Managing Wireguard Interface %s listening on port %d\n - private key: %s\n - public key: %s\n - specified key valid: %s\n", 
+      new_device.name, 
+      new_device.listen_port,
+      priv, pub,
+      (key_valid == true) ? "true" : "false"
+    );
+
 
   bool device_exists = wg_device_exists(new_device.name);
   fprintf(stderr, "device %s exists? %s\n", new_device.name, device_exists ?  "true" : "false");

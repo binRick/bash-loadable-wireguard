@@ -49,7 +49,10 @@ test_builtin() {
 
 #test_builtin color color "$DEFAULT_POST_CMD"
 #test_builtin color color "for x in \$(seq 1 5); do echo -e \"TS=\$TS|MS=\$MS\"; sleep 2; done"
-WIREGUARD_INTERFACE_NAME=wgtest10 test_builtin wg wg "wg"
-WIREGUARD_INTERFACE_NAME=wgtest11 test_builtin wg wg "wg"
-
+WIREGUARD_LISTEN_PORT=2777 WIREGUARD_INTERFACE_NAME= test_builtin wg wg "wg"
+WIREGUARD_LISTEN_PORT=1999 WIREGUARD_INTERFACE_NAME=wgtest10 test_builtin wg wg "wg"
+WIREGUARD_LISTEN_PORT=1888 WIREGUARD_INTERFACE_NAME=wgtest11 test_builtin wg wg "wg"
+WIREGUARD_LISTEN_PORT=     WIREGUARD_INTERFACE_NAME=wgtest12 test_builtin wg wg "wg"
+WIREGUARD_LISTEN_PORT=2001 WIREGUARD_INTERFACE_NAME=wgtest13 test_builtin wg wg "wg"
+WIREGUARD_PRIVATE_KEY="qJKSCynonUUyR8oOYD174ppCa77e0h1aC4Uh/QnHaXo=" WIREGUARD_LISTEN_PORT=2002 WIREGUARD_INTERFACE_NAME=wgtest14 test_builtin wg wg "wg"
 echo OK
