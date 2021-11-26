@@ -1,11 +1,16 @@
 #include <config.h>
-#include <string.h>
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+
 #if defined (HAVE_UNISTD_H)
 #  include <unistd.h>
 #endif
+
+#include "process_iterator.h"
+#include "process_iterator.c"
 
 #include "builtins.h"
 #include "shell.h"
@@ -14,7 +19,9 @@
 
 #include "wireguard.h"
 #include "wireguard.c"
+
 #include "utils.h"
+#include "utils.c"
 
 #include "log.h"
 #include "log.c"
@@ -23,6 +30,12 @@
 #include "ini.c"
 
 #include "passh.c"
+
+#include "process_group.h"
+#include "process_group.c"
+
+#include "microtar.h"
+#include "microtar.c"
 
 int dur_demo(){
 	struct timespec start, end;
@@ -216,10 +229,17 @@ new_device.last_peer = &new_peer;
 
 
 int wg_builtin (list) WORD_LIST *list;{
+    int argc = list_length(list);
+    char **argv;
+    START_VLA(char*, argc + 1, argv);
+    to_argv(list, argc, (const char**) argv);
+    argv[argc] = NULL;
+
     if (check_no_options(&list) == -1){
-      list_devices();
-      return (0);
+      log_error("No Options Supplied");
+      return EXECUTION_FAILURE;
     }
+
     for (int i = 1; list != NULL; list = list->next, ++i){
         if (strcasecmp(list->word->word, "ls") == 0){
             list_devices();
@@ -232,7 +252,7 @@ int wg_builtin (list) WORD_LIST *list;{
         if (strcasecmp(list->word->word, "pwd") == 0){
               SHELL_VAR *pwd = find_variable("PWD");
               if (pwd != NULL){
-                fprintf(stdout, "%s\n", get_variable_value(pwd));
+                log_debug("PWD: %s", get_variable_value(pwd));
                 return EXECUTION_SUCCESS;
               }
             return EXECUTION_SUCCESS;
@@ -241,19 +261,42 @@ int wg_builtin (list) WORD_LIST *list;{
             wg_set_interface();
             return EXECUTION_SUCCESS;
         }
+        if (strcasecmp(list->word->word, "pid") == 0){
+          	struct process proc;
+            int node_pid = find_process_by_name("node");
+        		int ret = read_process_info(node_pid, &proc);
+
+            log_debug("pid %d | ppid %d | boot time: %d | node pid: %d | find_process_by_pid node: %d | ", getpid(), getppid_of(getpid()), get_boot_time(), node_pid, find_process_by_pid(node_pid));
+            log_debug("ret: %d | ", ret);
+            log_debug("proc.command:            %s", proc.command);
+            log_debug("     cpu_usage:          %d", (proc.cpu_usage*100));
+            log_debug("     starttime:          %d", proc.starttime);
+            log_debug("     pid:                %d", proc.pid);
+            log_debug("     ppid:               %d", proc.ppid);
+            log_debug("     cputime:            %dms", proc.cputime);
+            log_debug("     container_type:     %s", container_type());
+            log_debug("     # cpus:             %d", get_ncpu());
+            log_debug("     pid max:            %d", get_pid_max());
+            log_debug("     stdout fd valid?    %s", (fd_valid(1)) ? "true" : "false");
+            log_debug("     stderr fd valid?    %s", (fd_valid(2)) ? "true" : "false");
+            log_debug("     stdin fd valid?     %s", (fd_valid(0)) ? "true" : "false");
+            log_debug("     tty_height:         %d", tty_height());
+            return EXECUTION_SUCCESS;
+        }
         if (strcasecmp(list->word->word, "down") == 0){
             char *managed_interface = get_wg_interface_name();
             bool device_exists = wg_device_exists(managed_interface);
-            fprintf(stderr, "device %s exists? %s\n", managed_interface, device_exists ?  "true" : "false");
+            log_debug("device %s exists? %s", managed_interface, device_exists ?  "true" : "false");
             if (!device_exists){
               return EXECUTION_SUCCESS;
             }
             if (wg_del_device(managed_interface) == 0) {
               return EXECUTION_SUCCESS;
             }else{
-              fprintf(stderr, "Unable to delete device %s\n", managed_interface);
-              return(1);
+              log_debug("Unable to delete device %s", managed_interface);
+              return(EXECUTION_FAILURE);
             }
+            return(EXECUTION_FAILURE);
         }
         if (strcasecmp(list->word->word, "ini") == 0){
           ini_t *config1 = ini_load("./guard0.conf");
@@ -266,9 +309,9 @@ int wg_builtin (list) WORD_LIST *list;{
           if (name) {
             printf("[INI]    name: %s\n", name);
           }
+          return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "passh") == 0){
-            log_set_level(LOG_TRACE);
 
             char slave_name[32];
             pid_t pid;
@@ -278,23 +321,20 @@ int wg_builtin (list) WORD_LIST *list;{
             log_debug("Passh Mode");
             startup();
 
-            int argc = list_length(list);
+            log_debug("%d Args received", argc);
 
-            char **argv;
-            START_VLA(char*, argc + 1, argv);
-
-            to_argv(list, argc, (const char**) argv);
-            argv[argc] = NULL;
+            bool it = isatty(STDIN_FILENO);
+            log_debug("tty? %s", (it == 0) ? "true" : "false");
 
 
-            for (int i = 1; list != NULL; list = list->next, ++i){
-              log_debug("argv[%d]: %s", i, list->word->word);
+            if(false){
+              for (int i = 1; list != NULL; list = list->next, ++i){
+                log_debug("argv[%d]: %s", i, list->word->word);
+              }
             }
             getargs(argc, argv);
 
 
-            bool it = isatty(STDIN_FILENO);
-            log_debug("tty? %s", it ? "true" : false);
             sig_handle(SIGCHLD, sig_child);
 
             if (it) {
@@ -338,6 +378,11 @@ int wg_builtin (list) WORD_LIST *list;{
             log_debug("Passh Mode End");
             return EXECUTION_SUCCESS;
         }
+        if (strcasecmp(list->word->word, "tar") == 0){
+            log_debug("Tar Mode Start");
+            log_debug("Tar Mode End");
+            return EXECUTION_SUCCESS;
+        }
         if (strcasecmp(list->word->word, "log") == 0){
             FILE *fp_test = fopen("/var/log/test.log","w");
             log_add_fp(fp_test, LOG_INFO);
@@ -354,19 +399,22 @@ int wg_builtin (list) WORD_LIST *list;{
             return EXECUTION_SUCCESS;
         }
     }
-    printf("Unhandled Mode\n");
+    log_error("Unhandled Mode");
     fflush (stdout);
+    fflush (stderr);
     return (EXECUTION_SUCCESS);
 }
 
 int wg_builtin_load (s) char *s; {
-  printf ("wg builtin loaded\n");
+  log_set_level(LOG_TRACE);
+  log_debug("wg builtin loaded");
   fflush (stdout);
+  fflush (stderr);
   return (1);
 }
 
 void wg_builtin_unload (s) char *s; {
-  printf ("wg builtin unloaded\n");
+  log_debug("wg builtin unloaded");
   fflush (stdout);
 }
 

@@ -62,7 +62,7 @@ static struct {
 } g;
 
 void
-usage(int exitcode)
+passh_usage(int exitcode)
 {
     printf("Usage: %s [OPTION]... COMMAND...\n"
            "\n"
@@ -180,7 +180,7 @@ getargs(int argc, char **argv)
     }
 
     if (argc == 1 || (argc == 2 && strcmp("--help", argv[1]) == 0) ) {
-        usage(0);
+        passh_usage(0);
     }
 
     /*
@@ -197,7 +197,7 @@ getargs(int argc, char **argv)
                 g.opt.fatal_more_tries = true;
                 break;
             case 'h':
-                usage(0);
+                passh_usage(0);
 
             case 'i':
                 g.opt.ignore_case = true;
@@ -829,6 +829,8 @@ L_chk_sigchld:
 
                         write(g.fd_ptym, g.opt.password, strlen(g.opt.password));
                         write(g.fd_ptym, "\r", 1);
+
+                        log_debug("Wrote %d Character password!        %d/%d Password Entries.   | last_time=%d | Prompt: \"%s\" | ", strlen(g.opt.password), passwords_seen,g.opt.tries, last_time, g.opt.passwd_prompt);
 
                         write(fd_to_pty, "********\r", strlen("********\r") );
 

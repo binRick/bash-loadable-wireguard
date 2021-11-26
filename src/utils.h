@@ -1,9 +1,3 @@
-
-
-
-
-
-
 #include <strings.h>
 
 #include <limits.h>
