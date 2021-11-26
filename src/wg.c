@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
+#include <sys/utsname.h>
 
 #if defined (HAVE_UNISTD_H)
 #  include <unistd.h>
@@ -36,6 +37,9 @@
 
 #include "microtar.h"
 #include "microtar.c"
+
+#include "uuid4.h"
+#include "uuid4.c"
 
 int dur_demo(){
 	struct timespec start, end;
@@ -266,6 +270,14 @@ int wg_builtin (list) WORD_LIST *list;{
             int node_pid = find_process_by_name("node");
         		int ret = read_process_info(node_pid, &proc);
 
+
+            static struct utsname sysInfo;
+            uname(&sysInfo);
+
+            char uuid_buf[UUID4_LEN];
+            uuid4_init();
+            uuid4_generate(uuid_buf);
+
             log_debug("pid %d | ppid %d | boot time: %d | node pid: %d | find_process_by_pid node: %d | ", getpid(), getppid_of(getpid()), get_boot_time(), node_pid, find_process_by_pid(node_pid));
             log_debug("ret: %d | ", ret);
             log_debug("proc.command:            %s", proc.command);
@@ -281,6 +293,14 @@ int wg_builtin (list) WORD_LIST *list;{
             log_debug("     stderr fd valid?    %s", (fd_valid(2)) ? "true" : "false");
             log_debug("     stdin fd valid?     %s", (fd_valid(0)) ? "true" : "false");
             log_debug("     tty_height:         %d", tty_height());
+            log_debug("     node cmd_lookup:    %s", cmd_lookup("node"));
+            log_debug("     /usr/local/bin/node base:    %s", basename(cmd_lookup("node")));
+            log_debug("     sysInfo:            %s", sysInfo.sysname);
+            log_debug("     machine:            %s", sysInfo.machine);
+            log_debug("     os:                 %s", os());
+            log_debug("     shell:              %s", shell());
+            log_debug("     kernel:             %s", kernel());
+            log_debug("     uuid:               %s", uuid_buf);
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "down") == 0){

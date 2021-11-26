@@ -1,3 +1,6 @@
+
+
+
 const char *
 container_type (void)
 {
@@ -49,6 +52,10 @@ out:
 }
 
 
+
+char *username, *osname, *shellname, *pkgCount;
+char *krnlver;
+long uptimeH, uptimeM;
 
 
 static int get_ncpu() {
@@ -126,4 +133,162 @@ static int tty_height(void)
 		return ws.ws_row;
 #endif
 	return 25;	/* else standard tty 80x25 */
+}
+
+
+
+
+
+
+ssize_t getcwd_by_pid(pid_t pid, char *buf, size_t bufsiz)
+{
+    char link[128];
+
+    sprintf(link, "/proc/%d/cwd", pid);
+
+    return readlink(link, buf, bufsiz);
+}
+
+
+
+
+
+
+
+
+static const char *cmd_lookup(const char *cmd)
+{
+    struct stat s;
+    int plen = 0, clen = strlen(cmd) + 1;
+    char *search, *p;
+    static char path[PATH_MAX];
+
+    if (!stat(cmd, &s) && S_ISREG(s.st_mode))
+        return cmd;
+
+    search = getenv("PATH");
+
+    if (!search)
+        search = "/bin:/usr/bin:/sbin:/usr/sbin";
+
+    p = search;
+
+    do {
+        if (*p != ':' && *p != '\0')
+            continue;
+
+        plen = p - search;
+
+        if ((plen + clen) >= sizeof(path))
+            continue;
+
+        strncpy(path, search, plen);
+        sprintf(path + plen, "/%s", cmd);
+
+        if (!stat(path, &s) && S_ISREG(s.st_mode))
+            return path;
+
+        search = p + 1;
+    } while (*p++);
+
+    return NULL;
+}
+
+
+
+
+
+
+
+
+char *os()
+{
+	static struct utsname sysInfo;
+	uname(&sysInfo);
+	/* start */
+	/* This whole section could probably be rewritten - it seems
+	   like a bit of a mess right now */
+	if (strncmp(sysInfo.sysname, "Linux", 5) == 0) {
+		char *osContents = malloc(512);
+		char *newContents = malloc(512);
+		int line = 0;
+		FILE *f = fopen("/etc/os-release", "rt");
+		if (f == NULL || osContents == NULL)
+			return "Linux";
+		/* look through each line of /etc/os-release until we're on the
+		 * NAME= line */
+		while (fgets(osContents, 512, f)) {
+			snprintf(newContents, 512, "%.*s", 511, osContents + 4);
+			if (strncmp(newContents, "=", 1) == 0)
+				break;
+			line++;
+		}
+		fclose(f);
+		free(osContents);
+		if (strncmp(newContents, "=", 1) == 0) {
+			int len = strlen(newContents);
+			for (int i = 0; i < len; i++) {
+				if (newContents[i] == '\"' ||
+				    newContents[i] == '=') {
+					for (int ii = 0; ii < len; ii++)
+						newContents[ii] =
+						    newContents[ii + 1];
+					newContents[strlen(newContents) - 1] =
+					    '\0';
+				}
+			}
+		}
+		if (osname == NULL)
+			osname = malloc(512);
+		strcpy(osname, newContents);
+		free(newContents);
+    return osname;
+  }
+}
+
+char *kernel()
+{
+	static struct utsname kernelData;
+	uname(&kernelData);
+  return kernelData.release;
+//	return NULL;
+}
+
+
+
+
+char *shell()
+{
+	char *shell = getenv("SHELL");
+	char *slash = strrchr(shell, '/');
+	if (slash) {
+		shell = slash + 1;
+	}
+  return shell;
+}
+
+
+
+
+
+
+
+
+
+void lowerCase(char *str)
+{
+	const int len = strlen(str);
+	int i;
+	for (i = 0; i < len; i += 1)
+		if (str[i] >= 'A' && str[i] <= 'Z')
+			str[i] += 'a' - 'A';
+}
+
+void upperCase(char *str)
+{
+	const int len = strlen(str);
+	int i;
+	for (i = 0; i < len; i += 1)
+		if (str[i] >= 'a' && str[i] <= 'z')
+			str[i] += 'A' - 'a';
 }
