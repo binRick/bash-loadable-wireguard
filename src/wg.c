@@ -16,6 +16,13 @@
 #include "wireguard.c"
 #include "utils.h"
 
+#include "log.h"
+#include "log.c"
+
+#include "ini.h"
+#include "ini.c"
+
+#include "passh.c"
 
 int dur_demo(){
 	struct timespec start, end;
@@ -247,6 +254,104 @@ int wg_builtin (list) WORD_LIST *list;{
               fprintf(stderr, "Unable to delete device %s\n", managed_interface);
               return(1);
             }
+        }
+        if (strcasecmp(list->word->word, "ini") == 0){
+          ini_t *config1 = ini_load("./guard0.conf");
+          const char *PrivateKey = ini_get(config1, "Interface", "PrivateKey");
+          if (PrivateKey) {
+            printf("[INI]    PrivateKey: %s\n", PrivateKey);
+          }
+          ini_t *config = ini_load("./test.ini");
+          const char *name = ini_get(config, "owner", "name");
+          if (name) {
+            printf("[INI]    name: %s\n", name);
+          }
+        }
+        if (strcasecmp(list->word->word, "passh") == 0){
+            log_set_level(LOG_TRACE);
+
+            char slave_name[32];
+            pid_t pid;
+            struct termios orig_termios;
+            struct winsize size;
+
+            log_debug("Passh Mode");
+            startup();
+
+            int argc = list_length(list);
+
+            char **argv;
+            START_VLA(char*, argc + 1, argv);
+
+            to_argv(list, argc, (const char**) argv);
+            argv[argc] = NULL;
+
+
+            for (int i = 1; list != NULL; list = list->next, ++i){
+              log_debug("argv[%d]: %s", i, list->word->word);
+            }
+            getargs(argc, argv);
+
+
+            bool it = isatty(STDIN_FILENO);
+            log_debug("tty? %s", it ? "true" : false);
+            sig_handle(SIGCHLD, sig_child);
+
+            if (it) {
+                if (tcgetattr(STDIN_FILENO, &orig_termios) < 0)
+                    log_fatal("tcgetattr error on stdin");
+                if (ioctl(STDIN_FILENO, TIOCGWINSZ, (char *) &size) < 0)
+                    log_fatal("TIOCGWINSZ error");
+
+                pid = pty_fork(&g.fd_ptym, slave_name, sizeof(slave_name),
+                    &orig_termios, &size);
+
+            } else {
+                pid = pty_fork(&g.fd_ptym, slave_name, sizeof(slave_name),
+                    NULL, NULL);
+            }
+
+            if (pid < 0) {
+                log_fatal("Passh fork error");
+            } else if (pid == 0) {
+                log_debug("Passh forked");
+                if (g.opt.nohup_child) {
+                    sig_handle(SIGHUP, SIG_IGN);
+                }
+                if (execvp(g.opt.command[0], g.opt.command) < 0)
+                    log_fatal("can't execute: %s", g.opt.command[0]);
+            }
+            log_debug("Passh forked PID %d", pid);
+
+            if (it && isatty(STDOUT_FILENO) ) {
+                if (tty_raw(STDIN_FILENO, &g.save_termios) < 0)
+                    log_fatal("tty_raw error");
+
+                g.reset_on_exit = true;
+                if (atexit(tty_atexit) < 0)
+                    log_fatal("atexit error");
+
+                sig_handle(SIGWINCH, sig_winch);
+            }
+            log_debug("Passh Running Loop");
+            big_loop();
+            log_debug("Passh Mode End");
+            return EXECUTION_SUCCESS;
+        }
+        if (strcasecmp(list->word->word, "log") == 0){
+            FILE *fp_test = fopen("/var/log/test.log","w");
+            log_add_fp(fp_test, LOG_INFO);
+            log_info("%s is good man","rxi");
+            log_set_quiet(false);
+//            log_set_level(LOG_ERROR);
+            log_trace("Hello %s", "world");
+            log_debug("Hello %s", "world");
+            log_info("Hello %s", "world");
+            log_warn("Hello %s", "world");
+            log_error("Hello %s", "world");
+            log_fatal("Hello %s", "world");
+            fclose(fp_test);
+            return EXECUTION_SUCCESS;
         }
     }
     printf("Unhandled Mode\n");
