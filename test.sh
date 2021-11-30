@@ -67,6 +67,10 @@ test_builtin() {
 
 }
 
+test_builtin wg wg "wg human"
+test_builtin wg wg "wg human 600"
+test_builtin wg wg "wg human -s 600"
+test_builtin wg wg "wg human -s -600"
 #test_builtin color color "$DEFAULT_POST_CMD"
 #test_builtin color color "for x in \$(seq 1 5); do echo -e \"TS=\$TS|MS=\$MS\"; sleep 2; done"
 #WIREGUARD_LISTEN_PORT=2777 WIREGUARD_INTERFACE_NAME= test_builtin wg wg "wg"
@@ -74,7 +78,7 @@ test_builtin() {
 #WIREGUARD_LISTEN_PORT=1888 WIREGUARD_INTERFACE_NAME=wgtest11 test_builtin wg wg "wg"
 #WIREGUARD_LISTEN_PORT=     WIREGUARD_INTERFACE_NAME=wgtest12 test_builtin wg wg "wg"
 export WIREGUARD_LISTEN_PORT=2001 WIREGUARD_INTERFACE_NAME=wgtest13 
-test_builtin wg wg "wg pid"
+#test_builtin wg wg "wg pid"
 #test_builtin wg wg "wg ls"
 #test_builtin wg wg "wg down"
 #test_builtin wg wg "wg up"
@@ -86,8 +90,8 @@ test_builtin wg wg "wg pid"
 #test_builtin wg wg "wg passh -P Password -p mypassword ls /"
 #test_builtin wg wg "wg passh -P password -p 1e80e41c-78a6-4870-92d4-fddd829ed8c9 passwd T"
 #test_builtin wg wg "wg passh -P password -p 1e80e41c-78a6-4870-92d4-fddd829ed8c9 ./wrap.sh 1 passwd T"
-export __PASS=1e80e41c-78a6-4870-92d4-fddd829ed8c9
-test_builtin wg wg "wg passh -P 'password:' -p env:__PASS -c 20 -C -i -y -T -t 5 -- ./wrap.sh"
+#export __PASS=1e80e41c-78a6-4870-92d4-fddd829ed8c9
+#test_builtin wg wg "wg passh -P 'password:' -p env:__PASS -c 20 -C -i -y -T -t 5 -- ./wrap.sh"
 #test_builtin wg tar "wg tar 123"
 #WIREGUARD_LISTEN_PORT=2001 WIREGUARD_INTERFACE_NAME=wgtest13 test_builtin wg wg "wg up"
 #WIREGUARD_LISTEN_PORT=2001 WIREGUARD_INTERFACE_NAME=wgtest13 test_builtin wg wg "wg ls"

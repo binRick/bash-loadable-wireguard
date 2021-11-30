@@ -13,10 +13,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <assert.h>
-
 #include "wireguard.h"
-
-/* wireguard.h netlink uapi: */
 
 #define WG_GENL_NAME "wireguard"
 #define WG_GENL_VERSION 1
@@ -30,6 +27,7 @@ enum wg_cmd {
 enum wgdevice_flag {
 	WGDEVICE_F_REPLACE_PEERS = 1U << 0
 };
+
 enum wgdevice_attribute {
 	WGDEVICE_A_UNSPEC,
 	WGDEVICE_A_IFINDEX,
@@ -47,6 +45,7 @@ enum wgpeer_flag {
 	WGPEER_F_REMOVE_ME = 1U << 0,
 	WGPEER_F_REPLACE_ALLOWEDIPS = 1U << 1
 };
+
 enum wgpeer_attribute {
 	WGPEER_A_UNSPEC,
 	WGPEER_A_PUBLIC_KEY,

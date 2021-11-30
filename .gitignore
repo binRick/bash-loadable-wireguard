@@ -20,3 +20,4 @@ Makefile
 src/Makefile
 m4/*
 *.swp
+.gitignore

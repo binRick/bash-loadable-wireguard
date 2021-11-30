@@ -41,6 +41,8 @@
 #include "uuid4.h"
 #include "uuid4.c"
 
+#include "human.c"
+
 int dur_demo(){
 	struct timespec start, end;
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
@@ -249,6 +251,11 @@ int wg_builtin (list) WORD_LIST *list;{
             list_devices();
             return EXECUTION_SUCCESS;
         }
+        if (strcasecmp(list->word->word, "human") == 0){
+            human_demo();
+            human_main(argc, argv);
+            return EXECUTION_SUCCESS;
+        }
         if (strcasecmp(list->word->word, "dur") == 0){
             dur_demo();
             return EXECUTION_SUCCESS;
@@ -419,7 +426,7 @@ int wg_builtin (list) WORD_LIST *list;{
             return EXECUTION_SUCCESS;
         }
     }
-    log_error("Unhandled Mode");
+    log_error("Unhandled Mode- %d Arguments Received", argc);
     fflush (stdout);
     fflush (stderr);
     return (EXECUTION_SUCCESS);
