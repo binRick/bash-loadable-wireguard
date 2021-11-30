@@ -43,6 +43,9 @@
 
 #include "human.c"
 
+#include "simpleconf.h"
+#include "config.c"
+
 int dur_demo(){
 	struct timespec start, end;
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
@@ -249,6 +252,10 @@ int wg_builtin (list) WORD_LIST *list;{
     for (int i = 1; list != NULL; list = list->next, ++i){
         if (strcasecmp(list->word->word, "ls") == 0){
             list_devices();
+            return EXECUTION_SUCCESS;
+        }
+        if (strcasecmp(list->word->word, "config") == 0){
+            config_main(argc, argv);
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "human") == 0){

@@ -21,3 +21,5 @@ src/Makefile
 m4/*
 *.swp
 .gitignore
+.envrc
+.envrc.sh
