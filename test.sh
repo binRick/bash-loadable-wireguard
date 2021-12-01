@@ -65,14 +65,20 @@ test_builtin() {
 
 }
 
+test_json() {
+	test_builtin wg wg "wg json"
+}
+
 test_human() {
-	test_builtin wg wg "wg human"
 	test_builtin wg wg "wg human 600"
+	test_builtin wg wg "wg human -600"
 	test_builtin wg wg "wg human -s 600"
 	test_builtin wg wg "wg human -s -600"
 }
 
-test_builtin wg wg "wg config"
+test_config() {
+  test_builtin wg wg "wg config"
+}
 
 #test_builtin color color "$DEFAULT_POST_CMD"
 #test_builtin color color "for x in \$(seq 1 5); do echo -e \"TS=\$TS|MS=\$MS\"; sleep 2; done"
@@ -104,4 +110,13 @@ export WIREGUARD_LISTEN_PORT=2001 WIREGUARD_INTERFACE_NAME=wgtest13
 #test_builtin wg wg "ls"
 #test_builtin wg wg "up"
 #test_builtin wg wg "down"
-echo OK
+main(){
+  test_config
+  test_human
+  test_json
+  echo OK
+}
+
+main
+
+

@@ -1,50 +1,4 @@
-#include <config.h>
-#include <stdlib.h>
-#include <time.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <string.h>
-#include <sys/utsname.h>
-
-#if defined (HAVE_UNISTD_H)
-#  include <unistd.h>
-#endif
-
-#include "process_iterator.h"
-#include "process_iterator.c"
-
-#include "builtins.h"
-#include "shell.h"
-#include "bashgetopt.h"
-#include "common.h"
-
-#include "wireguard.h"
-#include "wireguard.c"
-
-#include "utils.h"
-#include "utils.c"
-
-#include "log.h"
-#include "log.c"
-
-#include "ini.h"
-#include "ini.c"
-
-#include "passh.c"
-
-#include "process_group.h"
-#include "process_group.c"
-
-#include "microtar.h"
-#include "microtar.c"
-
-#include "uuid4.h"
-#include "uuid4.c"
-
-#include "human.c"
-
-#include "simpleconf.h"
-#include "config.c"
+#include "includes.h"
 
 int dur_demo(){
 	struct timespec start, end;
@@ -259,7 +213,6 @@ int wg_builtin (list) WORD_LIST *list;{
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "human") == 0){
-            human_demo();
             human_main(argc, argv);
             return EXECUTION_SUCCESS;
         }
@@ -273,6 +226,10 @@ int wg_builtin (list) WORD_LIST *list;{
                 log_debug("PWD: %s", get_variable_value(pwd));
                 return EXECUTION_SUCCESS;
               }
+            return EXECUTION_SUCCESS;
+        }
+        if (strcasecmp(list->word->word, "json") == 0){
+            json_demo();
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "up") == 0){

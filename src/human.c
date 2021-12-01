@@ -78,6 +78,3 @@ int human_main(int argc, char **argv) {
 	return 0;
 }
 
-void human_demo(){
-  fprintf(stderr,"human_demo.....\n");
-}
