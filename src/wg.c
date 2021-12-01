@@ -228,6 +228,26 @@ int wg_builtin (list) WORD_LIST *list;{
               }
             return EXECUTION_SUCCESS;
         }
+        if (strcasecmp(list->word->word, "bind") == 0){
+            reproc_bind_demo(argc, argv);
+            return EXECUTION_SUCCESS;
+        }
+        if (strcasecmp(list->word->word, "schedule") == 0){
+            reproc_schedule_demo(argc, argv);
+            return EXECUTION_SUCCESS;
+        }
+        if (strcasecmp(list->word->word, "reproc") == 0){
+            reproc_demo(argc, argv);
+            return EXECUTION_SUCCESS;
+        }
+        if (strcasecmp(list->word->word, "poll") == 0){
+            reproc_poll_demo(argc, argv);
+            return EXECUTION_SUCCESS;
+        }
+        if (strcasecmp(list->word->word, "sql") == 0){
+            sql_demo();
+            return EXECUTION_SUCCESS;
+        }
         if (strcasecmp(list->word->word, "json") == 0){
             json_demo();
             return EXECUTION_SUCCESS;

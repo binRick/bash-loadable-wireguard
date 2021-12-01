@@ -64,6 +64,22 @@ test_builtin() {
 	done < <(eval "$cmd")
 
 }
+ANSIBLE_TEST="env ansible localhost -i localhost, -c local -m setup -a gather_subset=min"
+ANSIBLE_TEST="env ANSIBLE_NO_TARGET_SYSLOG=True ANSIBLE_PYTHON_INTERPRETER=auto_silent ansible localhost -i localhost, -c local -m setup -a filter=ansible_virtualization_type --one-line"
+ANSIBLE_TEST="env ANSIBLE_NO_TARGET_SYSLOG=True ANSIBLE_PYTHON_INTERPRETER=auto_silent ansible localhost -i localhost, -c local -m setup -a gather_subset=min --one-line"
+test_reproc() {
+#	test_builtin wg wg "wg reproc env"
+	test_builtin wg wg "wg reproc $ANSIBLE_TEST; echo -e ANSIBLE_VIRTUALIZATION_TYPE=\$ANSIBLE_VIRTUALIZATION_TYPE; env|grep ^ANSIBLE_"
+	test_builtin wg wg "wg schedule $ANSIBLE_TEST; echo -e ANSIBLE_VIRTUALIZATION_TYPE=\$ANSIBLE_VIRTUALIZATION_TYPE; env|grep ^ANSIBLE_"
+#	test_builtin wg wg "wg reproc ls /"
+}
+test_reproc_poll() {
+	test_builtin wg wg "wg poll"
+}
+
+test_sql() {
+	test_builtin wg wg "wg sql"
+}
 
 test_json() {
 	test_builtin wg wg "wg json"
@@ -111,9 +127,12 @@ export WIREGUARD_LISTEN_PORT=2001 WIREGUARD_INTERFACE_NAME=wgtest13
 #test_builtin wg wg "up"
 #test_builtin wg wg "down"
 main(){
-  test_config
-  test_human
-  test_json
+#  test_config
+#  test_human
+#  test_json
+#  test_sql
+  test_reproc
+  test_reproc_poll
   echo OK
 }
 

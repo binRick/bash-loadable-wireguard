@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <string.h>
 #include <sys/utsname.h>
+#include <assert.h>
+#include <stdint.h>
 
 #if defined (HAVE_UNISTD_H)
 #  include <unistd.h>
@@ -50,3 +52,27 @@
 #include "ghh_json.h"
 
 #include "json.c"
+
+#include "strconv.h"
+
+#include "reproc/run.h"
+#include "reproc/reproc.h"
+#include "reproc/export.h"
+#include "reproc/src/clock.posix.c"
+#include "reproc/src/drain.c"
+#include "reproc/src/error.posix.c"
+#include "reproc/src/handle.posix.c"
+#include "reproc/src/init.posix.c"
+#include "reproc/src/options.c"
+#include "reproc/src/pipe.posix.c"
+#include "reproc/src/process.posix.c"
+#include "reproc/src/redirect.c"
+#include "reproc/src/redirect.posix.c"
+#include "reproc/src/reproc.c"
+#include "reproc/src/run.c"
+#include "reproc/src/strv.c"
+#include "reproc/src/utf.posix.c"
+
+#include "reproc.c"
+#include "reproc_poll.c"
+/* include "sql.c" */
