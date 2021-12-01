@@ -1,5 +1,6 @@
 #include "includes.h"
 
+
 int dur_demo(){
 	struct timespec start, end;
 	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
@@ -208,6 +209,11 @@ int wg_builtin (list) WORD_LIST *list;{
             list_devices();
             return EXECUTION_SUCCESS;
         }
+        if (strcasecmp(list->word->word, "guard-config") == 0){
+
+            guard_config(argc, argv);
+            return EXECUTION_SUCCESS;
+}
         if (strcasecmp(list->word->word, "config") == 0){
             config_main(argc, argv);
             return EXECUTION_SUCCESS;
@@ -261,9 +267,18 @@ int wg_builtin (list) WORD_LIST *list;{
             int node_pid = find_process_by_name("node");
         		int ret = read_process_info(node_pid, &proc);
 
-
             static struct utsname sysInfo;
+            struct timespec uname_start, uname_end;
+            clock_gettime(CLOCK_MONOTONIC_RAW, &uname_start);
+
             uname(&sysInfo);
+
+            clock_gettime(CLOCK_MONOTONIC_RAW, &uname_end);
+            if(uname_end.tv_nsec < uname_start.tv_nsec){
+              uname_end.tv_nsec += 1000000000;
+              uname_end.tv_sec--;
+            }
+            log_debug("Completed Uname in: [%ld.%09ld]s\n", (long)(uname_end.tv_sec - uname_start.tv_sec), (uname_end.tv_nsec - uname_start.tv_nsec));
 
             char uuid_buf[UUID4_LEN];
             uuid4_init();
@@ -310,7 +325,8 @@ int wg_builtin (list) WORD_LIST *list;{
             return(EXECUTION_FAILURE);
         }
         if (strcasecmp(list->word->word, "ini") == 0){
-          ini_t *config1 = ini_load("./guard0.conf");
+//          ini_t *vpntc = ini_load("/etc/sysconfig/vpntech");
+          ini_t *config1 = ini_load("/etc/wireguard/guard0.conf");
           const char *PrivateKey = ini_get(config1, "Interface", "PrivateKey");
           if (PrivateKey) {
             printf("[INI]    PrivateKey: %s\n", PrivateKey);

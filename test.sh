@@ -96,8 +96,6 @@ test_config() {
   test_builtin wg wg "wg config"
 }
 
-#test_builtin color color "$DEFAULT_POST_CMD"
-#test_builtin color color "for x in \$(seq 1 5); do echo -e \"TS=\$TS|MS=\$MS\"; sleep 2; done"
 #WIREGUARD_LISTEN_PORT=2777 WIREGUARD_INTERFACE_NAME= test_builtin wg wg "wg"
 #WIREGUARD_LISTEN_PORT=1999 WIREGUARD_INTERFACE_NAME=wgtest10 test_builtin wg wg "wg"
 #WIREGUARD_LISTEN_PORT=1888 WIREGUARD_INTERFACE_NAME=wgtest11 test_builtin wg wg "wg"
@@ -126,13 +124,23 @@ export WIREGUARD_LISTEN_PORT=2001 WIREGUARD_INTERFACE_NAME=wgtest13
 #test_builtin wg wg "ls"
 #test_builtin wg wg "up"
 #test_builtin wg wg "down"
+
+
+test_wg(){
+  test_builtin wg wg "wg pid"
+  test_builtin wg wg "wg ls"
+  test_builtin wg wg "wg passh -P Password -p mypassword ls /"
+  test_builtin wg wg "wg ini"
+  test_builtin wg wg "wg guard-config"
+}
 main(){
-#  test_config
-#  test_human
-#  test_json
+  test_config
+  test_human
+  test_json
+  test_wg
 #  test_sql
-  test_reproc
-  test_reproc_poll
+#  test_reproc
+#  test_reproc_poll
   echo OK
 }
 
