@@ -34,8 +34,8 @@
 
 #include "passh.c"
 
-#include "process_group.h"
-#include "process_group.c"
+// #include "process_group.h"
+// #include "process_group.c"
 
 #include "microtar.h"
 #include "microtar.c"
@@ -72,11 +72,17 @@
 #include "reproc/src/run.c"
 #include "reproc/src/strv.c"
 #include "reproc/src/utf.posix.c"
-
 #include "reproc.c"
 #include "reproc_poll.c"
+
 
 /* include "sql.c" */
 
 //include "flingfd.h"
 //include "flingfd.c"
+//
+
+
+#include "dynamic.c"
+#include "ansible.c"
+

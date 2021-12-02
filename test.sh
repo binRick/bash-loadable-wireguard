@@ -126,6 +126,10 @@ export WIREGUARD_LISTEN_PORT=2001 WIREGUARD_INTERFACE_NAME=wgtest13
 #test_builtin wg wg "down"
 
 
+test_dynamic(){
+  test_builtin wg wg "wg dynamic"
+
+}
 test_wg(){
   test_builtin wg wg "wg pid"
   test_builtin wg wg "wg ls"
@@ -134,10 +138,11 @@ test_wg(){
   test_builtin wg wg "wg guard-config"
 }
 main(){
-  test_config
-  test_human
+#  test_config
+#  test_human
   test_json
-  test_wg
+#  test_wg
+  test_dynamic
 #  test_sql
 #  test_reproc
 #  test_reproc_poll

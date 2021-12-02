@@ -235,23 +235,40 @@ int wg_builtin (list) WORD_LIST *list;{
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "bind") == 0){
-            reproc_bind_demo(argc, argv);
+            //reproc_bind_demo(argc, argv);
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "schedule") == 0){
-            reproc_schedule_demo(argc, argv);
+            //reproc_schedule_demo(argc, argv);
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "reproc") == 0){
-            reproc_demo(argc, argv);
+//            reproc_demo(argc, argv);
+            return EXECUTION_SUCCESS;
+        }
+        if (strcasecmp(list->word->word, "dynamic") == 0){
+ //           log_debug("init_dynamic2=>%s", init_dynamic_var("DYNAMIC2", get_dynamic1));
+            log_debug("init_dynamic1=>%d", init_dynamic1());
+            log_debug("get_dynamic1_val=>%s", get_dynamic1_val());
+            char f1[8192];
+            get_ansible_facts_json("localhost");
+//            log_debug("get_ansible_facts_json=>%d bytes", strlen(get_ansible_facts_json("localhost")));
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "poll") == 0){
-            reproc_poll_demo(argc, argv);
+  //          reproc_poll_demo(argc, argv);
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "sql") == 0){
-            sql_demo();
+            //sql_demo();
+            return EXECUTION_SUCCESS;
+        }
+        if (strcasecmp(list->word->word, "https_demo") == 0){
+//            https_demo(argc, argv);
+            return EXECUTION_SUCCESS;
+        }
+        if (strcasecmp(list->word->word, "functions") == 0){
+            //bash_functions = all_visible_functions();
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "json") == 0){
@@ -434,7 +451,12 @@ int wg_builtin (list) WORD_LIST *list;{
 
 int wg_builtin_load (s) char *s; {
   log_set_level(LOG_TRACE);
-  log_debug("wg builtin loaded");
+
+  char uuid_buf[UUID4_LEN];
+  uuid4_init();
+  uuid4_generate(uuid_buf);
+
+  log_debug("wg builtin loaded- %s", uuid_buf);
   fflush (stdout);
   fflush (stderr);
   return (1);
