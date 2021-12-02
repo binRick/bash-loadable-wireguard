@@ -243,16 +243,18 @@ int wg_builtin (list) WORD_LIST *list;{
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "reproc") == 0){
-//            reproc_demo(argc, argv);
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "dynamic") == 0){
- //           log_debug("init_dynamic2=>%s", init_dynamic_var("DYNAMIC2", get_dynamic1));
             log_debug("init_dynamic1=>%d", init_dynamic1());
             log_debug("get_dynamic1_val=>%s", get_dynamic1_val());
             char f1[8192];
-            get_ansible_facts_json("localhost");
-//            log_debug("get_ansible_facts_json=>%d bytes", strlen(get_ansible_facts_json("localhost")));
+            int ansible_interfaces_qty = -1;
+            json_object_t *facts = get_ansible_facts_json("localhost");
+            json_object_t **ansible_interfaces = json_get_array(facts, "ansible_interfaces", &ansible_interfaces_qty);
+            log_debug("ansible_fqdn=%s", json_get_string(facts, "ansible_fqdn"));
+            log_debug("ipv4:\n%s", json_serialize(json_get_object(facts, "ansible_default_ipv4"), false, 2, 0));
+ //           log_debug("%d interfaces:%s", ansible_interfaces_qty, json_serialize(ansible_interfaces[0], false, 2, 0));
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "poll") == 0){

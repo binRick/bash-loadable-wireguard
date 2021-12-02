@@ -24,7 +24,7 @@ char *parse_ansible_adhoc_stdout_to_struct(char *stdout_content){
   return "";
 }
 
-char *get_ansible_facts_json(char *hostname){
+json_object_t *get_ansible_facts_json(char *hostname){
   reproc_t *process = NULL;
   char *output = NULL;
   size_t size = 0;
@@ -42,7 +42,7 @@ char *get_ansible_facts_json(char *hostname){
   sprintf(module_args, 
     "%s"
     "\0", 
-    "gather_subset=min"
+    "gather_subset=all"
   );
   sprintf(module_name, 
     "%s"
@@ -91,9 +91,6 @@ char *get_ansible_facts_json(char *hostname){
     "ANSIBLE_PYTHON_INTERPRETER=auto_silent", 
     "\0"
   };
-//  process->deadline = REPROC_DEADLINE;
-//  process->pipe.out = PIPE_INVALID;
-//  process->pipe.err = HANDLE_INVALID;
   r = reproc_start(process, ansible_argv, (reproc_options){ 
       .redirect.discard = false,
       .working_directory = "/",
@@ -174,8 +171,10 @@ finish:
   }
   json_t json;
   json_load(&json, sj);
-  char *ansible_architecture = json_get_string(json_get_object(json.root, "ansible_facts"), "ansible_architecture");
-  char *ansible_distribution = json_get_string(json_get_object(json.root, "ansible_facts"), "ansible_distribution");
+  json_object_t *facts = json_get_object(json.root, "ansible_facts");
+
+  char *ansible_architecture = json_get_string(facts, "ansible_architecture");
+  char *ansible_distribution = json_get_string(facts, "ansible_distribution");
   char *ansible_distribution_version = json_get_string(json_get_object(json.root, "ansible_facts"), "ansible_distribution_version");
   char *ansible_domain = json_get_string(json_get_object(json.root, "ansible_facts"), "ansible_domain");
   char *ansible_fqdn = json_get_string(json_get_object(json.root, "ansible_facts"), "ansible_fqdn");
@@ -216,5 +215,5 @@ finish:
   );
   reproc_destroy(process);
   free(output);
-  return sj;
+  return facts;
 }
