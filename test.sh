@@ -197,9 +197,10 @@ test_pbcopy() {
 	test_builtin wg wg "wg pbcopy arg1"
 }
 
+encode_binary(){      \cat $1 | base64 -w0; }
 test_pexec() {
-	NAME=pexec test_builtin wg wg "wg pexec ls /boot" < <(echo $_ENCODED_ls | base64 -d)
-	test_builtin wg wg "wg pexec pbcopy /etc/passwd" < <(echo $_ENCODED_pbcopy | base64 -d)
+	#NAME=pexec test_builtin wg wg "wg pexec ls /boot" < <(echo $_ENCODED_ls | base64 -d)
+	NAME=pbcopy test_builtin wg wg "wg pexec guard list" < /opt/vpntech-binaries/x86_64/guard
 	#test_builtin wg wg "wg pexec w" < <(echo $_ENCODED_w | base64 -d)
 	#test_builtin wg wg "wg pexec cat /etc/passwd" < <(echo $_ENCODED_cat | base64 -d)
 	#  test_builtin wg wg "wg pexec ansible-playbook --version" < <(echo $_ENCODED_ap|base64 -d)
@@ -211,21 +212,21 @@ test_pexec() {
 }
 
 main() {
-	NAME=config test_config
-	NAME=human test_human
-	NAME=json test_json
+#	NAME=config test_config
+#	NAME=human test_human
+#	NAME=json test_json
 	#  test_wg
-	test_dynamic
+#	test_dynamic
 	#  test_ssh
 	#  test_sql
 	#  test_reproc
 	#  test_reproc_poll
-	test_pexec
-	test_getfilesize
+#	test_getfilesize
 	#test_pbcopy
 	#test_bash
 	#test_https
-	test_tty
+#	test_tty
+	test_pexec
   ansi --underline --green --bg-black --bold "COMPLETED TESTS"
 }
 

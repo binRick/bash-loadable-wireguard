@@ -28,7 +28,8 @@ done < <(eval "$cmd")
 }
 
 do_shell(){
-  cmd="command env command bash --rcfile $RCFILE -i"
+set +e
+  cmd="command env command bash --rcfile $RCFILE +e -i"
  >&2  ansi --yellow --italic "$cmd"
   eval "$cmd"
   
