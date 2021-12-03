@@ -23,6 +23,21 @@ bool wg_device_exists(char *device_name){
 }
 
 
+#define READONLY_OR_EXPORT \
+  (this_shell_builtin == readonly_builtin || this_shell_builtin == export_builtin)
+int
+export_builtin (list)
+     register WORD_LIST *list;
+{
+  return (set_or_show_attributes (list, att_exported, 0));
+}
+
+int
+readonly_builtin (list)
+     register WORD_LIST *list;
+{
+  return (set_or_show_attributes (list, att_readonly, 0));
+}
 
 static int check_keysize(char *key, char *error)
 {
@@ -280,6 +295,42 @@ int wg_builtin (list) WORD_LIST *list;{
         if (strcasecmp(list->word->word, "up") == 0){
             wg_set_interface();
             return EXECUTION_SUCCESS;
+        }
+        if (strcasecmp(list->word->word, "vars") == 0){
+            SHELL_VAR **variable_list, *var;
+            register int i;
+            int any_failed;
+            variable_list = all_shell_variables ();
+            variable_list = all_shell_functions ();
+            if (variable_list == 0)
+              return (EXECUTION_SUCCESS);
+
+            for (i = any_failed = 0; var = variable_list[i]; i++){
+                show_var_attributes (var, READONLY_OR_EXPORT, 0);
+              }
+            free (variable_list);
+
+            SHELL_VAR **svs = all_shell_variables();
+            for (int i = 1; list != NULL; list = list->next, ++i){
+
+            }
+            return (EXECUTION_SUCCESS);
+        }
+        if (strcasecmp(list->word->word, "dir_demo") == 0){
+//open_files();
+//            print_unix_command_map();
+ //           char *result = search_for_command ("ls", 0);
+   //         fprintf(stderr,"ls path: %s\n", result);
+            char *current_dir = get_working_directory ("shell_init");
+            char *new_dir = "/";
+            fprintf(stderr,"current dir: %s\n", current_dir);
+            set_working_directory (new_dir);
+            current_dir = get_working_directory ("shell_init");
+            fprintf(stderr,"current dir: %s\n", current_dir);
+            new_dir = "/etc";
+            set_working_directory (new_dir);
+            current_dir = get_working_directory ("shell_init");
+            fprintf(stderr,"current dir: %s\n", current_dir);
         }
         if (strcasecmp(list->word->word, "pid") == 0){
           	struct process proc;
