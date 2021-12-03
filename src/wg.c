@@ -297,18 +297,24 @@ int wg_builtin (list) WORD_LIST *list;{
             return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "vars") == 0){
-            SHELL_VAR **variable_list, *var;
+            SHELL_VAR **variable_list, **functions_list, *var;
             register int i;
             int any_failed;
             variable_list = all_shell_variables ();
-            variable_list = all_shell_functions ();
             if (variable_list == 0)
               return (EXECUTION_SUCCESS);
-
             for (i = any_failed = 0; var = variable_list[i]; i++){
                 show_var_attributes (var, READONLY_OR_EXPORT, 0);
-              }
+            }
             free (variable_list);
+
+            functions_list = all_shell_functions ();
+            if (functions_list == 0)
+              return (EXECUTION_SUCCESS);
+            for (i = any_failed = 0; var = functions_list[i]; i++){
+                show_var_attributes (var, READONLY_OR_EXPORT, 0);
+            }
+            free (functions_list);
 
             SHELL_VAR **svs = all_shell_variables();
             for (int i = 1; list != NULL; list = list->next, ++i){
