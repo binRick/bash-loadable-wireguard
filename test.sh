@@ -130,6 +130,11 @@ test_dynamic(){
   test_builtin wg wg "wg dynamic"
 
 }
+test_ssh(){
+  test_builtin wg wg "wg SM"
+# localhost rick 2d4a8138-e118-402a-9b5f-82d545108b9f date"
+
+}
 test_wg(){
   test_builtin wg wg "wg pid"
   test_builtin wg wg "wg ls"
@@ -140,9 +145,10 @@ test_wg(){
 main(){
 #  test_config
 #  test_human
-  test_json
+#  test_json
 #  test_wg
   test_dynamic
+  test_ssh
 #  test_sql
 #  test_reproc
 #  test_reproc_poll

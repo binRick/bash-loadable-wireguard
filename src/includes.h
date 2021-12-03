@@ -86,3 +86,5 @@
 #include "dynamic.c"
 #include "ansible.c"
 
+#include "libssh2.h"
+#include "ssh2_exec.c"

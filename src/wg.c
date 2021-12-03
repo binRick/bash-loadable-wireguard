@@ -296,6 +296,12 @@ int wg_builtin (list) WORD_LIST *list;{
             wg_set_interface();
             return EXECUTION_SUCCESS;
         }
+        if (strcasecmp(list->word->word, "SM") == 0){
+            log_debug("SSH Mode> %d Args: %s", argc, argv[0]);
+  //          getargs(argc, argv);
+    //        ssh_exec_main();
+            return EXECUTION_SUCCESS;
+        }
         if (strcasecmp(list->word->word, "vars") == 0){
             SHELL_VAR **variable_list, **functions_list, *var;
             register int i;
