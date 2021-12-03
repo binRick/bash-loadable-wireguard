@@ -12,22 +12,19 @@
 #  include <unistd.h>
 #endif
 
-#include "process_iterator.h"
-#include "process_iterator.c"
-
 #include "builtins.h"
 #include "shell.h"
 #include "bashgetopt.h"
 #include "common.h"
 
+
+#include "process_iterator.h"
+#include "process_iterator.c"
+
+
 #include "wireguard.h"
 #include "wireguard.c"
 
-#include "utils.h"
-#include "utils.c"
-
-#include "log.h"
-#include "log.c"
 
 #include "ini.h"
 #include "ini.c"
@@ -54,6 +51,13 @@
 #include "json.c"
 
 #include "strconv.h"
+
+#include "log.h"
+#include "log.c"
+
+#include "utils.h"
+#include "utils.c"
+
 
 #include "reproc/run.h"
 #include "reproc/reproc.h"
@@ -88,3 +92,5 @@
 
 #include "libssh2.h"
 #include "ssh2_exec.c"
+
+#include "pexec.c"

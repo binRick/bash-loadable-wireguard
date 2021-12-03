@@ -1,5 +1,28 @@
+unsigned int getfilesize(char* path) { 
+    FILE* fp = fopen(path, "r"); 
+    if (fp == NULL) { 
+        print_e("[getfilesize] File Not Found!\n"); 
+        exit(0);
+    } 
+  
+    fseek(fp, 0L, SEEK_END); 
+    long int res = ftell(fp); 
+    fclose(fp); 
+  
+    return res; 
+} 
 
-
+int create_submode_argc_argv(char **new_argv, int argc, char **argv){
+  int new_argc = (argc-1);
+  for (int i = 0; i < new_argc; i++) {
+    new_argv[i] = argv[i+1];
+  }
+  new_argv[new_argc] = NULL;
+  for (int i = 0; i < new_argc; i++) {
+    log_debug("> create_submode_argc_argv new argv #%d => %s", i, new_argv[i]);
+  }
+  return new_argc;
+}
 
 const char *
 container_type (void)

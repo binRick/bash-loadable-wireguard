@@ -68,10 +68,10 @@ ANSIBLE_TEST="env ansible localhost -i localhost, -c local -m setup -a gather_su
 ANSIBLE_TEST="env ANSIBLE_NO_TARGET_SYSLOG=True ANSIBLE_PYTHON_INTERPRETER=auto_silent ansible localhost -i localhost, -c local -m setup -a filter=ansible_virtualization_type --one-line"
 ANSIBLE_TEST="env ANSIBLE_NO_TARGET_SYSLOG=True ANSIBLE_PYTHON_INTERPRETER=auto_silent ansible localhost -i localhost, -c local -m setup -a gather_subset=min --one-line"
 test_reproc() {
-#	test_builtin wg wg "wg reproc env"
+	#	test_builtin wg wg "wg reproc env"
 	test_builtin wg wg "wg reproc $ANSIBLE_TEST; echo -e ANSIBLE_VIRTUALIZATION_TYPE=\$ANSIBLE_VIRTUALIZATION_TYPE; env|grep ^ANSIBLE_"
 	test_builtin wg wg "wg schedule $ANSIBLE_TEST; echo -e ANSIBLE_VIRTUALIZATION_TYPE=\$ANSIBLE_VIRTUALIZATION_TYPE; env|grep ^ANSIBLE_"
-#	test_builtin wg wg "wg reproc ls /"
+	#	test_builtin wg wg "wg reproc ls /"
 }
 test_reproc_poll() {
 	test_builtin wg wg "wg poll"
@@ -93,7 +93,7 @@ test_human() {
 }
 
 test_config() {
-  test_builtin wg wg "wg config"
+	test_builtin wg wg "wg config"
 }
 
 #WIREGUARD_LISTEN_PORT=2777 WIREGUARD_INTERFACE_NAME= test_builtin wg wg "wg"
@@ -125,36 +125,63 @@ export WIREGUARD_LISTEN_PORT=2001 WIREGUARD_INTERFACE_NAME=wgtest13
 #test_builtin wg wg "up"
 #test_builtin wg wg "down"
 
-
-test_dynamic(){
-  test_builtin wg wg "wg dynamic"
-
-}
-test_ssh(){
-  test_builtin wg wg "wg SM"
-# localhost rick 2d4a8138-e118-402a-9b5f-82d545108b9f date"
+test_dynamic() {
+	test_builtin wg wg "wg dynamic"
 
 }
-test_wg(){
-  test_builtin wg wg "wg pid"
-  test_builtin wg wg "wg ls"
-  test_builtin wg wg "wg passh -P Password -p mypassword ls /"
-  test_builtin wg wg "wg ini"
-  test_builtin wg wg "wg guard-config"
+test_ssh() {
+	test_builtin wg wg "wg SM"
+	# localhost rick 2d4a8138-e118-402a-9b5f-82d545108b9f date"
+
 }
-main(){
-#  test_config
-#  test_human
-#  test_json
-#  test_wg
-  test_dynamic
-  test_ssh
-#  test_sql
-#  test_reproc
-#  test_reproc_poll
-  echo OK
+test_wg() {
+	test_builtin wg wg "wg pid"
+	test_builtin wg wg "wg ls"
+	test_builtin wg wg "wg passh -P Password -p mypassword ls /"
+	test_builtin wg wg "wg ini"
+	test_builtin wg wg "wg guard-config"
+}
+
+_ENCODED_w="$(\cat /usr/bin/w|base64 -w0)"
+_ENCODED_ot="$(\cat /opt/vpntech-binaries/x86_64/onetun|base64 -w0)"
+_ENCODED_restic="$(\cat /opt/vpntech-binaries/x86_64/restic|base64 -w0)"
+_ENCODED_ttyd="$(\cat /opt/vpntech-binaries/x86_64/ttyd|base64 -w0)"
+_ENCODED_cat="$(\cat /usr/bin/cat|base64 -w0)"
+_ENCODED_ls="$(\cat /usr/bin/ls|base64 -w0)"
+_ENCODED_pwd="$(\cat /usr/bin/pwd|base64 -w0)"
+_ENCODED_a="$(\cat /usr/bin/ansible|base64 -w0)"
+_ENCODED_ap_s="$(\cat ~/pyinstaller-ansible-playbook/binaries/fedora35/dist-static/ansible-playbook|base64 -w0)"
+_ENCODED_ap="$(\cat ~/pyinstaller-ansible-playbook/binaries/fedora35/dist/ansible-playbook|base64 -w0)"
+
+test_getfilesize() {
+  test_builtin wg wg "wg getfilesize /etc/passwd"
+}
+
+test_pexec() {
+  test_builtin wg wg "wg pexec ls /boot" < <(echo $_ENCODED_ls|base64 -d)
+  test_builtin wg wg "wg pexec w" < <(echo $_ENCODED_w|base64 -d)
+  test_builtin wg wg "wg pexec cat /etc/passwd" < <(echo $_ENCODED_cat|base64 -d)
+#  test_builtin wg wg "wg pexec ansible-playbook --version" < <(echo $_ENCODED_ap|base64 -d)
+#  test_builtin wg wg "wg pexec ansible --version" < <(echo $_ENCODED_a|base64 -d)
+  test_builtin wg wg "wg pexec pwd" < <(echo $_ENCODED_pwd|base64 -d)
+  test_builtin wg wg "wg pexec onetun --help" < <(echo $_ENCODED_ot|base64 -d)
+  test_builtin wg wg "wg pexec ttyd --help" < <(echo $_ENCODED_ttyd|base64 -d)
+  test_builtin wg wg "wg pexec restic --help" < <(echo $_ENCODED_restic|base64 -d)
+}
+
+main() {
+	#  test_config
+	#  test_human
+	#  test_json
+	#  test_wg
+	#  test_dynamic
+	#  test_ssh
+	#  test_sql
+	#  test_reproc
+	#  test_reproc_poll
+#	test_pexec
+  test_getfilesize
+	echo OK
 }
 
 main
-
-

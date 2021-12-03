@@ -296,7 +296,15 @@ int wg_builtin (list) WORD_LIST *list;{
             wg_set_interface();
             return EXECUTION_SUCCESS;
         }
-        if (strcasecmp(list->word->word, "SM") == 0){
+        if (strcasecmp(list->word->word, "pexec") == 0){
+            log_debug("pexec Mode> %d Args: %s", argc, argv[0]);
+            int result = pexec_demo(argc, argv);
+            log_debug("          > %d", result);
+            return EXECUTION_SUCCESS;
+        }else if (strcasecmp(list->word->word, "getfilesize") == 0){
+            log_info("getfilesize> File %s -> %d Bytes", argv[1], getfilesize(argv[1]));
+            return EXECUTION_SUCCESS;
+        }else if (strcasecmp(list->word->word, "SM") == 0){
             log_debug("SSH Mode> %d Args: %s", argc, argv[0]);
   //          getargs(argc, argv);
     //        ssh_exec_main();
