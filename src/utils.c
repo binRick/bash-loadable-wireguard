@@ -1,3 +1,4 @@
+
 unsigned int getfilesize(char* path) { 
     FILE* fp = fopen(path, "r"); 
     if (fp == NULL) { 
@@ -11,6 +12,131 @@ unsigned int getfilesize(char* path) {
   
     return res; 
 } 
+
+
+struct timeval
+timeval_diff (struct timeval tv1, struct timeval tv2)
+{
+    struct timeval diff;
+
+    diff.tv_sec = tv2.tv_sec - tv1.tv_sec;
+    diff.tv_usec = tv2.tv_usec - tv1.tv_usec;
+
+    if (diff.tv_usec < 0) {
+        diff.tv_sec--;
+        diff.tv_usec += 1000000;
+    }
+
+    return diff;
+}
+
+
+void
+clear_screen (void) {
+    printf("\e[1;1H\e[2J");
+}
+
+
+
+bool endswith(const char *str, const char *suffix) {
+  size_t str_len = strlen(str);
+  size_t suffix_len = strlen(suffix);
+  return str_len > suffix_len && !strcmp(str + (str_len - suffix_len), suffix);
+}
+
+static const char *port2str(int port){
+    static char buffer[sizeof("65535\0")];
+
+    if (port < 0 || port > 65535)
+        return NULL;
+
+    snprintf(buffer, sizeof(buffer), "%u", port);
+
+    return buffer;
+}
+
+
+const char *format_size(size_t size) {
+    static char str[64];
+    if (size < 1024)
+        sprintf(str, "%zu B", size);
+    else if (size < 1024 * 1024)
+        sprintf(str, "%.2f KB", size / 1024.0);
+    else
+        sprintf(str, "%.2f MB", size / 1024.0 / 1024.0);
+
+    return str;
+}
+
+
+
+/*
+ *  getcwd_pid does not append a null byte to buf.  It will (silently) truncate the contents (to
+ *  a length of bufsiz characters), in case the buffer is too small to hold all the contents.
+ */
+ssize_t getcwd_by_pid(pid_t pid, char *buf, size_t bufsiz)
+{
+    char link[128];
+
+    sprintf(link, "/proc/%d/cwd", pid);
+
+    return readlink(link, buf, bufsiz);
+}
+
+bool getuid_by_pid(pid_t pid, uid_t *uid)
+{
+    char status[128];
+    char line[128];
+    int i = 9;
+    FILE *fp;
+
+    sprintf(status, "/proc/%d/status", pid);
+
+    fp = fopen(status, "r");
+    if (!fp)
+        return false;
+
+    while (i-- > 0) {
+        if (!fgets(line, sizeof(line), fp)) {
+            fclose(fp);
+            return false;
+        }
+    }
+
+    fclose(fp);
+    
+    sscanf(line, "Uid:\t%u", uid);
+    
+    return true;
+}
+
+bool getgid_by_pid(pid_t pid, gid_t *gid)
+{
+    char status[128];
+    char line[128];
+    int i = 10;
+    FILE *fp;
+
+    sprintf(status, "/proc/%d/status", pid);
+
+    fp = fopen(status, "r");
+    if (!fp)
+        return false;
+
+    while (i-- > 0) {
+        if (!fgets(line, sizeof(line), fp)) {
+            fclose(fp);
+            return false;
+        }
+    }
+
+    fclose(fp);
+    
+    sscanf(line, "Gid:\t%u", gid);
+    
+    return true;
+}
+
 
 int create_submode_argc_argv(char **new_argv, int argc, char **argv){
   int new_argc = (argc-1);
@@ -141,8 +267,7 @@ fd_valid (int fd)
 
 
 
-static int tty_height(void)
-{
+static int tty_height(void) {
 #ifdef TIOCGWINSZ
 	const int fd = 0;
 	struct winsize ws;
@@ -157,27 +282,6 @@ static int tty_height(void)
 #endif
 	return 25;	/* else standard tty 80x25 */
 }
-
-
-
-
-
-
-ssize_t getcwd_by_pid(pid_t pid, char *buf, size_t bufsiz)
-{
-    char link[128];
-
-    sprintf(link, "/proc/%d/cwd", pid);
-
-    return readlink(link, buf, bufsiz);
-}
-
-
-
-
-
-
-
 
 static const char *cmd_lookup(const char *cmd)
 {

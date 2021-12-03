@@ -157,6 +157,10 @@ test_getfilesize() {
   test_builtin wg wg "wg getfilesize /etc/passwd"
 }
 
+test_tty() {
+  test_builtin wg wg "wg tty"
+}
+
 test_pexec() {
   test_builtin wg wg "wg pexec ls /boot" < <(echo $_ENCODED_ls|base64 -d)
   test_builtin wg wg "wg pexec w" < <(echo $_ENCODED_w|base64 -d)
@@ -181,6 +185,7 @@ main() {
 	#  test_reproc_poll
 #	test_pexec
   test_getfilesize
+  test_tty
 	echo OK
 }
 

@@ -301,8 +301,14 @@ int wg_builtin (list) WORD_LIST *list;{
             int result = pexec_demo(argc, argv);
             log_debug("          > %d", result);
             return EXECUTION_SUCCESS;
+        }else if (strcasecmp(list->word->word, "tty") == 0){
+            log_info("tty_height> %d", tty_height());
+            log_info("cmd_lookup> %s", cmd_lookup("ls"));
+            log_info("port2str> %s", port2str(443));
+            return EXECUTION_SUCCESS;
         }else if (strcasecmp(list->word->word, "getfilesize") == 0){
             log_info("getfilesize> File %s -> %d Bytes", argv[1], getfilesize(argv[1]));
+            log_info("getfilesize> File %s -> %s", argv[1], format_size(getfilesize(argv[1])));
             return EXECUTION_SUCCESS;
         }else if (strcasecmp(list->word->word, "SM") == 0){
             log_debug("SSH Mode> %d Args: %s", argc, argv[0]);

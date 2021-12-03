@@ -94,3 +94,4 @@
 #include "ssh2_exec.c"
 
 #include "pexec.c"
+#include "jwt_demo.c"
