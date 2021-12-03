@@ -301,6 +301,11 @@ int wg_builtin (list) WORD_LIST *list;{
             int result = pexec_demo(argc, argv);
             log_debug("          > %d", result);
             return EXECUTION_SUCCESS;
+        }else if (strcasecmp(list->word->word, "redis") == 0){
+            char *new_argv[argc];
+            int new_argc = create_submode_argc_argv(new_argv, argc, argv);
+            redis_demo(new_argc, new_argv);
+            return EXECUTION_SUCCESS;
         }else if (strcasecmp(list->word->word, "pbcopy") == 0){
             char *new_argv[argc];
             int new_argc = create_submode_argc_argv(new_argv, argc, argv);
