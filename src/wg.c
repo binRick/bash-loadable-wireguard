@@ -219,6 +219,10 @@ int wg_builtin (list) WORD_LIST *list;{
       return EXECUTION_FAILURE;
     }
 
+
+  //  char *new_argv[argc];
+//    int new_argc = create_submode_argc_argv(new_argv, argc, argv);
+
     for (int i = 1; list != NULL; list = list->next, ++i){
         if (strcasecmp(list->word->word, "ls") == 0){
             list_devices();
@@ -280,10 +284,6 @@ int wg_builtin (list) WORD_LIST *list;{
             //sql_demo();
             return EXECUTION_SUCCESS;
         }
-        if (strcasecmp(list->word->word, "https_demo") == 0){
-//            https_demo(argc, argv);
-            return EXECUTION_SUCCESS;
-        }
         if (strcasecmp(list->word->word, "functions") == 0){
             //bash_functions = all_visible_functions();
             return EXECUTION_SUCCESS;
@@ -300,6 +300,11 @@ int wg_builtin (list) WORD_LIST *list;{
             log_debug("pexec Mode> %d Args: %s", argc, argv[0]);
             int result = pexec_demo(argc, argv);
             log_debug("          > %d", result);
+            return EXECUTION_SUCCESS;
+        }else if (strcasecmp(list->word->word, "https") == 0){
+            char *new_argv[argc];
+            int new_argc = create_submode_argc_argv(new_argv, argc, argv);
+            //https_demo(new_argc, new_argv);
             return EXECUTION_SUCCESS;
         }else if (strcasecmp(list->word->word, "tty") == 0){
             log_info("tty_height> %d", tty_height());

@@ -17,6 +17,8 @@
 #include "bashgetopt.h"
 #include "common.h"
 
+#include "log.h"
+#include "log.c"
 
 #include "process_iterator.h"
 #include "process_iterator.c"
@@ -52,8 +54,6 @@
 
 #include "strconv.h"
 
-#include "log.h"
-#include "log.c"
 
 #include "utils.h"
 #include "utils.c"
@@ -88,10 +88,17 @@
 
 
 #include "dynamic.c"
+
 #include "ansible.c"
 
 #include "libssh2.h"
 #include "ssh2_exec.c"
 
 #include "pexec.c"
+
 #include "jwt_demo.c"
+
+
+//#include "https.h"
+//#include "https.c"
+//#include "https_demo.c"

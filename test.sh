@@ -142,50 +142,55 @@ test_wg() {
 	test_builtin wg wg "wg guard-config"
 }
 
-_ENCODED_w="$(\cat /usr/bin/w|base64 -w0)"
-_ENCODED_ot="$(\cat /opt/vpntech-binaries/x86_64/onetun|base64 -w0)"
-_ENCODED_restic="$(\cat /opt/vpntech-binaries/x86_64/restic|base64 -w0)"
-_ENCODED_ttyd="$(\cat /opt/vpntech-binaries/x86_64/ttyd|base64 -w0)"
-_ENCODED_cat="$(\cat /usr/bin/cat|base64 -w0)"
-_ENCODED_ls="$(\cat /usr/bin/ls|base64 -w0)"
-_ENCODED_pwd="$(\cat /usr/bin/pwd|base64 -w0)"
-_ENCODED_a="$(\cat /usr/bin/ansible|base64 -w0)"
-_ENCODED_ap_s="$(\cat ~/pyinstaller-ansible-playbook/binaries/fedora35/dist-static/ansible-playbook|base64 -w0)"
-_ENCODED_ap="$(\cat ~/pyinstaller-ansible-playbook/binaries/fedora35/dist/ansible-playbook|base64 -w0)"
+_ENCODED_w="$(\cat /usr/bin/w | base64 -w0)"
+_ENCODED_ot="$(\cat /opt/vpntech-binaries/x86_64/onetun | base64 -w0)"
+_ENCODED_restic="$(\cat /opt/vpntech-binaries/x86_64/restic | base64 -w0)"
+_ENCODED_ttyd="$(\cat /opt/vpntech-binaries/x86_64/ttyd | base64 -w0)"
+_ENCODED_cat="$(\cat /usr/bin/cat | base64 -w0)"
+_ENCODED_ls="$(\cat /usr/bin/ls | base64 -w0)"
+_ENCODED_pwd="$(\cat /usr/bin/pwd | base64 -w0)"
+_ENCODED_a="$(\cat /usr/bin/ansible | base64 -w0)"
+_ENCODED_ap_s="$(\cat ~/pyinstaller-ansible-playbook/binaries/fedora35/dist-static/ansible-playbook | base64 -w0)"
+_ENCODED_ap="$(\cat ~/pyinstaller-ansible-playbook/binaries/fedora35/dist/ansible-playbook | base64 -w0)"
 
 test_getfilesize() {
-  test_builtin wg wg "wg getfilesize /etc/passwd"
+	test_builtin wg wg "wg getfilesize /etc/passwd"
 }
 
 test_tty() {
-  test_builtin wg wg "wg tty"
+	test_builtin wg wg "wg tty"
+}
+
+test_https() {
+	test_builtin wg wg "wg https"
 }
 
 test_pexec() {
-  test_builtin wg wg "wg pexec ls /boot" < <(echo $_ENCODED_ls|base64 -d)
-  test_builtin wg wg "wg pexec w" < <(echo $_ENCODED_w|base64 -d)
-  test_builtin wg wg "wg pexec cat /etc/passwd" < <(echo $_ENCODED_cat|base64 -d)
-#  test_builtin wg wg "wg pexec ansible-playbook --version" < <(echo $_ENCODED_ap|base64 -d)
-#  test_builtin wg wg "wg pexec ansible --version" < <(echo $_ENCODED_a|base64 -d)
-  test_builtin wg wg "wg pexec pwd" < <(echo $_ENCODED_pwd|base64 -d)
-  test_builtin wg wg "wg pexec onetun --help" < <(echo $_ENCODED_ot|base64 -d)
-  test_builtin wg wg "wg pexec ttyd --help" < <(echo $_ENCODED_ttyd|base64 -d)
-  test_builtin wg wg "wg pexec restic --help" < <(echo $_ENCODED_restic|base64 -d)
+	test_builtin wg wg "wg pexec ls /boot" < <(echo $_ENCODED_ls | base64 -d)
+	test_builtin wg wg "wg pexec w" < <(echo $_ENCODED_w | base64 -d)
+	test_builtin wg wg "wg pexec cat /etc/passwd" < <(echo $_ENCODED_cat | base64 -d)
+	#  test_builtin wg wg "wg pexec ansible-playbook --version" < <(echo $_ENCODED_ap|base64 -d)
+	#  test_builtin wg wg "wg pexec ansible --version" < <(echo $_ENCODED_a|base64 -d)
+	test_builtin wg wg "wg pexec pwd" < <(echo $_ENCODED_pwd | base64 -d)
+	test_builtin wg wg "wg pexec onetun --help" < <(echo $_ENCODED_ot | base64 -d)
+	test_builtin wg wg "wg pexec ttyd --help" < <(echo $_ENCODED_ttyd | base64 -d)
+	test_builtin wg wg "wg pexec restic --help" < <(echo $_ENCODED_restic | base64 -d)
 }
 
 main() {
-	#  test_config
-	#  test_human
-	#  test_json
+	test_config
+	test_human
+	test_json
 	#  test_wg
-	#  test_dynamic
+	test_dynamic
 	#  test_ssh
 	#  test_sql
 	#  test_reproc
 	#  test_reproc_poll
-#	test_pexec
-  test_getfilesize
-  test_tty
+	test_pexec
+	test_getfilesize
+	test_tty
+	#test_https
 	echo OK
 }
 
