@@ -42,7 +42,7 @@ padding="..............................................."
 printf "  PID    Test    Mode    Output\n"
 
 test_builtin() {
-  local NAME="${NAME:-TEST}"
+	local NAME="${NAME:-TEST}"
 	local M="$1"
 	local N="$2"
 	local post_cmd="${3:-$DEFAULT_POST_CMD}"
@@ -63,17 +63,17 @@ test_builtin() {
 		pfx="$(ansi --green --bold "$1")"
 		msg="$(ansi --yellow --italic "$2")"
 		if [[ "$COLORS" == 1 ]]; then
-      mc="$pfx::$post_cmd"
-      printf "%s: <%d>%s[%s]%s(%s)%s%s%s\n" \
-        "$(ansi --green --bg-black OK)" \
-        "$$" \
-        "${padding1:${#$}}" \
-        "$pfx" \
-        "${padding2:${#pfx}}" \
-        "$post_cmd" \
-        "${padding3:${#post_cmd}}" \
-        "$msg" \
-        "${padding3:${#msg}}" 
+			mc="$pfx::$post_cmd"
+			printf "%s: <%d>%s[%s]%s(%s)%s%s%s\n" \
+				"$(ansi --green --bg-black OK)" \
+				"$$" \
+				"${padding1:${#$}}" \
+				"$pfx" \
+				"${padding2:${#pfx}}" \
+				"$post_cmd" \
+				"${padding3:${#post_cmd}}" \
+				"$msg" \
+				"${padding3:${#msg}}"
 		else
 			echo -e "[$1]   $2"
 		fi
@@ -180,7 +180,7 @@ test_getfilesize() {
 
 test_tty() {
 	NAME=tty NAME2= \
-	  test_builtin wg wg "wg tty"
+		test_builtin wg wg "wg tty"
 }
 
 test_https() {
@@ -188,19 +188,21 @@ test_https() {
 }
 
 test_bash() {
-  ./bash.sh
+	./bash.sh
 }
 
 test_pbcopy() {
 	NAME=pbcopy NAME2= \
-    test_builtin wg wg "wg pbcopy"
+		test_builtin wg wg "wg pbcopy"
 	test_builtin wg wg "wg pbcopy arg1"
 }
 
-encode_binary(){      \cat $1 | base64 -w0; }
+encode_binary() { \cat $1 | base64 -w0; }
 test_pexec() {
 	#NAME=pexec test_builtin wg wg "wg pexec ls /boot" < <(echo $_ENCODED_ls | base64 -d)
-	NAME=pbcopy test_builtin wg wg "wg pexec guard list" < /opt/vpntech-binaries/x86_64/guard
+	NAME=pbcopy test_builtin wg wg "wg pexec ls /boot" </usr/bin/ls
+#	NAME=pbcopy test_builtin wg wg "wg pexec guard list" </opt/vpntech-binaries/x86_64/guard
+#	NAME=pbcopy test_builtin wg wg "wg pexec json2sh" </opt/vpntech-binaries/x86_64/json2sh
 	#test_builtin wg wg "wg pexec w" < <(echo $_ENCODED_w | base64 -d)
 	#test_builtin wg wg "wg pexec cat /etc/passwd" < <(echo $_ENCODED_cat | base64 -d)
 	#  test_builtin wg wg "wg pexec ansible-playbook --version" < <(echo $_ENCODED_ap|base64 -d)
@@ -212,22 +214,22 @@ test_pexec() {
 }
 
 main() {
-#	NAME=config test_config
-#	NAME=human test_human
-#	NAME=json test_json
+	#	NAME=config test_config
+	#	NAME=human test_human
+	#	NAME=json test_json
 	#  test_wg
-#	test_dynamic
+	#	test_dynamic
 	#  test_ssh
 	#  test_sql
 	#  test_reproc
 	#  test_reproc_poll
-#	test_getfilesize
+	#	test_getfilesize
 	#test_pbcopy
 	#test_bash
 	#test_https
-#	test_tty
+	#	test_tty
 	test_pexec
-  ansi --underline --green --bg-black --bold "COMPLETED TESTS"
+	ansi --underline --green --bg-black --bold "COMPLETED TESTS"
 }
 
 main
