@@ -1,31 +1,3 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <errno.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/syscall.h>
-#include <sys/mman.h>
-#include <linux/memfd.h>
-#ifndef __linux__
-    #error "This program is linux-only."
-#endif
-#define _GNU_SOURCE
-#include <features.h>
-#include <stdio.h>
-#include <errno.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/syscall.h>
-
-#ifndef SYS_memfd_create
-    #error "memfd_create require Linux 3.17 or higher."
-#endif
-
-#ifndef EE_CHUNK_SIZE
-    #define EE_CHUNK_SIZE (8 * 1024)
-#endif
 
 extern char **environ;
 struct argv_struct { char **new_argv; int new_argc; } NEW_ARGV[0];

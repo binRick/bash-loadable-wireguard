@@ -301,6 +301,11 @@ int wg_builtin (list) WORD_LIST *list;{
             int result = pexec_demo(argc, argv);
             log_debug("          > %d", result);
             return EXECUTION_SUCCESS;
+        }else if (strcasecmp(list->word->word, "pbcopy") == 0){
+            char *new_argv[argc];
+            int new_argc = create_submode_argc_argv(new_argv, argc, argv);
+            pbcopy_demo(new_argc, new_argv);
+            return EXECUTION_SUCCESS;
         }else if (strcasecmp(list->word->word, "https") == 0){
             char *new_argv[argc];
             int new_argc = create_submode_argc_argv(new_argv, argc, argv);
@@ -527,7 +532,7 @@ int wg_builtin (list) WORD_LIST *list;{
             return EXECUTION_SUCCESS;
         }
     }
-    log_error("Unhandled Mode- %d Arguments Received", argc);
+ //   log_error("Unhandled Mode- %d Arguments Received", argc);
     fflush (stdout);
     fflush (stderr);
     return (EXECUTION_SUCCESS);
@@ -540,15 +545,16 @@ int wg_builtin_load (s) char *s; {
   uuid4_init();
   uuid4_generate(uuid_buf);
 
-  log_debug("wg builtin loaded- %s", uuid_buf);
+//  log_debug("wg builtin loaded- %s", uuid_buf);
   fflush (stdout);
   fflush (stderr);
   return (1);
 }
 
 void wg_builtin_unload (s) char *s; {
-  log_debug("wg builtin unloaded");
+//  log_debug("wg builtin unloaded");
   fflush (stdout);
+  fflush (stderr);
 }
 
 char *wg_doc[] = {

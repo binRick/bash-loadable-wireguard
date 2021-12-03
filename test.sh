@@ -26,13 +26,21 @@ EOF
 	exit 0
 fi
 
-COLORS=0
+COLORS=1
 DEFAULT_POST_CMD="echo -e \"MYPID=\$MYPID\nTS=\$TS\nMS=\$MS\""
 
-ansi --cyan --bold "Epoch MS: $(date +%s%3N)"
-ansi --magenta --bold "Epoch: $(date +%s)"
+#ansi --cyan --bold "Epoch MS: $(date +%s%3N)"
+#ansi --magenta --bold "Epoch: $(date +%s)"
+
+# length of maximum padding
+padding1="        "
+padding2="                                                  "
+padding="..............................................."
+
+printf "  PID    Test    Mode    Output\n"
 
 test_builtin() {
+  local NAME="${NAME:-TEST}"
 	local M="$1"
 	local N="$2"
 	local post_cmd="${3:-$DEFAULT_POST_CMD}"
@@ -53,15 +61,24 @@ test_builtin() {
 		pfx="$(ansi --green --bold "$1")"
 		msg="$(ansi --yellow --italic "$2")"
 		if [[ "$COLORS" == 1 ]]; then
-			echo -e "[$pfx]   $msg"
+#			echo -e "<$$> [$pfx] [$(ansi --blue --italic "$post_cmd")]   $msg"
+      mc="$pfx::$post_cmd"
+      printf "<%d>%s[%s]%s%s%s\n" \
+        "$$" \
+        "${padding1:${#$}}" \
+        "$mc" \
+        "${padding2:${#mc}}" \
+        "$msg" \
+        "${padding:${#msg}}" 
+#%s%s %s\n" "$title" "${padding:${#title}}" "Page 1"
 		else
 			echo -e "[$1]   $2"
 		fi
 	}
 
 	while read -r l; do
-		ok "TEST" "$l"
-	done < <(eval "$cmd")
+		ok "$NAME" "$l"
+	done < <(eval "$cmd" 2>&1)
 
 }
 ANSIBLE_TEST="env ansible localhost -i localhost, -c local -m setup -a gather_subset=min"
@@ -144,6 +161,7 @@ test_wg() {
 
 _ENCODED_w="$(\cat /usr/bin/w | base64 -w0)"
 _ENCODED_ot="$(\cat /opt/vpntech-binaries/x86_64/onetun | base64 -w0)"
+_ENCODED_pbcopy="$(\cat /opt/vpntech-binaries/x86_64/pbcopy | base64 -w0)"
 _ENCODED_restic="$(\cat /opt/vpntech-binaries/x86_64/restic | base64 -w0)"
 _ENCODED_ttyd="$(\cat /opt/vpntech-binaries/x86_64/ttyd | base64 -w0)"
 _ENCODED_cat="$(\cat /usr/bin/cat | base64 -w0)"
@@ -158,29 +176,41 @@ test_getfilesize() {
 }
 
 test_tty() {
-	test_builtin wg wg "wg tty"
+	NAME=tty NAME2= \
+	  test_builtin wg wg "wg tty"
 }
 
 test_https() {
 	test_builtin wg wg "wg https"
 }
 
+test_bash() {
+  ./bash.sh
+}
+
+test_pbcopy() {
+	NAME=pbcopy NAME2= \
+    test_builtin wg wg "wg pbcopy"
+	test_builtin wg wg "wg pbcopy arg1"
+}
+
 test_pexec() {
-	test_builtin wg wg "wg pexec ls /boot" < <(echo $_ENCODED_ls | base64 -d)
-	test_builtin wg wg "wg pexec w" < <(echo $_ENCODED_w | base64 -d)
-	test_builtin wg wg "wg pexec cat /etc/passwd" < <(echo $_ENCODED_cat | base64 -d)
+	NAME=pexec test_builtin wg wg "wg pexec ls /boot" < <(echo $_ENCODED_ls | base64 -d)
+	test_builtin wg wg "wg pexec pbcopy /etc/passwd" < <(echo $_ENCODED_pbcopy | base64 -d)
+	#test_builtin wg wg "wg pexec w" < <(echo $_ENCODED_w | base64 -d)
+	#test_builtin wg wg "wg pexec cat /etc/passwd" < <(echo $_ENCODED_cat | base64 -d)
 	#  test_builtin wg wg "wg pexec ansible-playbook --version" < <(echo $_ENCODED_ap|base64 -d)
 	#  test_builtin wg wg "wg pexec ansible --version" < <(echo $_ENCODED_a|base64 -d)
-	test_builtin wg wg "wg pexec pwd" < <(echo $_ENCODED_pwd | base64 -d)
-	test_builtin wg wg "wg pexec onetun --help" < <(echo $_ENCODED_ot | base64 -d)
-	test_builtin wg wg "wg pexec ttyd --help" < <(echo $_ENCODED_ttyd | base64 -d)
-	test_builtin wg wg "wg pexec restic --help" < <(echo $_ENCODED_restic | base64 -d)
+	#test_builtin wg wg "wg pexec pwd" < <(echo $_ENCODED_pwd | base64 -d)
+	#test_builtin wg wg "wg pexec onetun --help" < <(echo $_ENCODED_ot | base64 -d)
+	#test_builtin wg wg "wg pexec ttyd --help" < <(echo $_ENCODED_ttyd | base64 -d)
+	#test_builtin wg wg "wg pexec restic --help" < <(echo $_ENCODED_restic | base64 -d)
 }
 
 main() {
-	test_config
-	test_human
-	test_json
+	NAME=config test_config
+	NAME=human test_human
+	NAME=json test_json
 	#  test_wg
 	test_dynamic
 	#  test_ssh
@@ -188,10 +218,12 @@ main() {
 	#  test_reproc
 	#  test_reproc_poll
 	test_pexec
-	test_getfilesize
-	test_tty
+#	test_getfilesize
+	#test_pbcopy
+	#test_bash
 	#test_https
-	echo OK
+	test_tty
+  ansi --underline --green --bg-black --bold "COMPLETED TESTS"
 }
 
 main
