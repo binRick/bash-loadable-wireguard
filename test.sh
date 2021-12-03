@@ -34,7 +34,9 @@ DEFAULT_POST_CMD="echo -e \"MYPID=\$MYPID\nTS=\$TS\nMS=\$MS\""
 
 # length of maximum padding
 padding1="        "
-padding2="                                                  "
+padding2="                            "
+padding3="                                     "
+padding4="                                              "
 padding="..............................................."
 
 printf "  PID    Test    Mode    Output\n"
@@ -61,16 +63,17 @@ test_builtin() {
 		pfx="$(ansi --green --bold "$1")"
 		msg="$(ansi --yellow --italic "$2")"
 		if [[ "$COLORS" == 1 ]]; then
-#			echo -e "<$$> [$pfx] [$(ansi --blue --italic "$post_cmd")]   $msg"
       mc="$pfx::$post_cmd"
-      printf "<%d>%s[%s]%s%s%s\n" \
+      printf "%s: <%d>%s[%s]%s(%s)%s%s%s\n" \
+        "$(ansi --green --bg-black OK)" \
         "$$" \
         "${padding1:${#$}}" \
-        "$mc" \
-        "${padding2:${#mc}}" \
+        "$pfx" \
+        "${padding2:${#pfx}}" \
+        "$post_cmd" \
+        "${padding3:${#post_cmd}}" \
         "$msg" \
-        "${padding:${#msg}}" 
-#%s%s %s\n" "$title" "${padding:${#title}}" "Page 1"
+        "${padding3:${#msg}}" 
 		else
 			echo -e "[$1]   $2"
 		fi
@@ -218,7 +221,7 @@ main() {
 	#  test_reproc
 	#  test_reproc_poll
 	test_pexec
-#	test_getfilesize
+	test_getfilesize
 	#test_pbcopy
 	#test_bash
 	#test_https

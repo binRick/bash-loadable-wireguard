@@ -2,7 +2,11 @@
 set -e
 cd $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 export PATH=$PATH:$(pwd)/bin
-ARGS="${@:-ini}"
+ARGS="${@:-}"
+RCFILE=$(mktemp)
+echo -e "enable -f libs/wg.so wg" > $RCFILE
+
+test_cmd(){
 
 v1=123
 cmd="$(cat << EOF1
@@ -20,3 +24,19 @@ while read -r l; do
  >&2  echo -e "$msg"
 #  echo -e "$l"
 done < <(eval "$cmd")
+
+}
+
+do_shell(){
+  cmd="command env command bash --rcfile $RCFILE -i"
+ >&2  ansi --yellow --italic "$cmd"
+  eval "$cmd"
+  
+}
+
+
+if [[ "$ARGS" == "" ]]; then
+  do_shell
+else
+  test_cmd
+fi

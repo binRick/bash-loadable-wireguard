@@ -1,10 +1,14 @@
-
 extern char **environ;
 struct argv_struct { char **new_argv; int new_argc; } NEW_ARGV[0];
 
 int exit_failure(const char* msg){
     perror(msg);
     return EXIT_FAILURE;
+}
+char *binaries[100];
+
+char **get_binaries(){
+  return binaries;
 }
 
 int pexec_demo(int argc, char **argv){
