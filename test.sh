@@ -222,11 +222,11 @@ test_pbcopy() {
 encode_binary() { \cat $1 | base64 -w0; }
 test_pexec() {
 	#NAME=pexec test_builtin wg wg "wg pexec ls /boot" < <(echo $_ENCODED_ls | base64 -d)
-	NAME=pbcopy test_builtin wg wg "wg pexec ls /boot" </usr/bin/ls
+	NAME=pexec test_builtin wg wg "wg pexec ls /boot" </usr/bin/ls
+	NAME=pexec test_builtin wg wg "wg pexec cat /etc/passwd" < <(echo $_ENCODED_cat | base64 -d)
 	#	NAME=pbcopy test_builtin wg wg "wg pexec guard list" </opt/vpntech-binaries/x86_64/guard
 	#	NAME=pbcopy test_builtin wg wg "wg pexec json2sh" </opt/vpntech-binaries/x86_64/json2sh
 	#test_builtin wg wg "wg pexec w" < <(echo $_ENCODED_w | base64 -d)
-	#test_builtin wg wg "wg pexec cat /etc/passwd" < <(echo $_ENCODED_cat | base64 -d)
 	#  test_builtin wg wg "wg pexec ansible-playbook --version" < <(echo $_ENCODED_ap|base64 -d)
 	#  test_builtin wg wg "wg pexec ansible --version" < <(echo $_ENCODED_a|base64 -d)
 	#test_builtin wg wg "wg pexec pwd" < <(echo $_ENCODED_pwd | base64 -d)
@@ -236,7 +236,8 @@ test_pexec() {
 }
 
 test_modes(){
-	test_builtin wg wg "wg modes"
+#	test_builtin wg wg "wg modes demo"
+	test_builtin wg wg "wg progress demo"
 }
 
 ok_main() {
@@ -254,15 +255,16 @@ ok_main() {
 	#test_bash
 	#	test_https
 	NAME=tty test_tty
-	NAME=pexec test_pexec
 	NAME=ini test_ini
 	NAME=trim test_trim
 	NAME=redis test_redis
 	NAME=reproc test_reproc
 	NAME=log test_log
 	NAME=pwd test_pwd
-	NAME=vars test_vars
+	#NAME=vars test_vars
+	NAME=pexec test_pexec
 }
+
 main() {
   ok_main
   NAME=modes test_modes

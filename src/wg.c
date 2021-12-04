@@ -219,6 +219,17 @@ int wg_builtin (list) WORD_LIST *list;{
             log_debug("          > %d", result);
             return EXECUTION_SUCCESS;
 
+        }else if (strcasecmp(list->word->word, "table") == 0){
+            table_demo();
+            return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "qr") == 0){
+            log_info("qr..........");
+            char *new_argv[argc];
+            int new_argc = create_submode_argc_argv(new_argv, argc, argv);
+            qr_demo(new_argc, new_argv);
+            return EXECUTION_SUCCESS;
+
         }else if (strcasecmp(list->word->word, "redis") == 0){
             char *new_argv[argc];
             int new_argc = create_submode_argc_argv(new_argv, argc, argv);
@@ -274,6 +285,10 @@ int wg_builtin (list) WORD_LIST *list;{
 
         }else if (strcasecmp(list->word->word, "dur") == 0){
             dur_demo();
+            return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "progress") == 0){
+            progress_demo();
             return EXECUTION_SUCCESS;
 
         }else if (strcasecmp(list->word->word, "human") == 0){

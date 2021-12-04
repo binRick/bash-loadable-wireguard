@@ -151,3 +151,14 @@
 
 #include "modes.c"
 
+#include "progress.h"
+#include "progress.c"
+#include "progress_demo.c"
+
+#include "qrencode.h"
+#include "qr_demo.c"
+
+#include "llist.h"
+#include "contable.h"
+#include "contables.c"
+#include "table_demo.c"
