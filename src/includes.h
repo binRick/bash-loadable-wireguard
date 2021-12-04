@@ -162,3 +162,7 @@
 #include "contable.h"
 #include "contables.c"
 #include "table_demo.c"
+
+#include "term.h"
+#include "term.c"
+#include "term_demo.c"

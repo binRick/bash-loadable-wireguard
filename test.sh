@@ -238,6 +238,9 @@ test_pexec() {
 test_modes(){
 #	test_builtin wg wg "wg modes demo"
 	test_builtin wg wg "wg progress demo"
+	test_builtin wg wg "wg qr demo"
+	test_builtin wg wg "wg table demo"
+	test_builtin wg wg "wg term demo"
 }
 
 ok_main() {
