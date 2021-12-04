@@ -183,6 +183,10 @@ test_tty() {
 		test_builtin wg wg "wg tty"
 }
 
+test_redis() {
+	test_builtin wg wg "wg redis demo 127.0.0.1 6379"
+#	test_builtin wg wg "wg redis demo 127.0.0.1 6380"
+}
 test_https() {
 	test_builtin wg wg "wg https"
 }
@@ -228,7 +232,8 @@ main() {
 	#test_bash
 	#test_https
 	#	test_tty
-	test_pexec
+#	test_pexec
+	test_redis
 	ansi --underline --green --bg-black --bold "COMPLETED TESTS"
 }
 
