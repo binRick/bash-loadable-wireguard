@@ -235,7 +235,11 @@ test_pexec() {
 	#test_builtin wg wg "wg pexec restic --help" < <(echo $_ENCODED_restic | base64 -d)
 }
 
-main() {
+test_modes(){
+	test_builtin wg wg "wg modes"
+}
+
+ok_main() {
 	NAME=dur test_dur
 	NAME=config test_config
 	NAME=human test_human
@@ -258,6 +262,9 @@ main() {
 	NAME=log test_log
 	NAME=pwd test_pwd
 	NAME=vars test_vars
+}
+main() {
+  NAME=modes test_modes
 	ansi --underline --blink --green --bg-black --bold "COMPLETED TESTS"
 }
 

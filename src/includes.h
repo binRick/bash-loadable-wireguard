@@ -49,6 +49,9 @@
 #include "log.h"
 #include "log.c"
 
+#include "color.h"
+#include "color.c"
+
 #include "process_iterator.h"
 #include "process_iterator.c"
 
@@ -145,3 +148,6 @@
 #include "redis/redis_demo.c"
 
 #include "dur_demo.c"
+
+#include "modes.c"
+

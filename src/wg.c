@@ -334,12 +334,16 @@ int wg_builtin (list) WORD_LIST *list;{
              log_debug("PWD: %s", get_variable_value(pwd));
              return EXECUTION_SUCCESS;
            }
-           return EXECUTION_SUCCESS;
+           return EXECUTION_FAILURE;
+
         }else if (strcasecmp(list->word->word, "getfilesize") == 0){
             log_info("getfilesize> File %s -> %d Bytes", argv[1], getfilesize(argv[1]));
             log_info("getfilesize> File %s -> %s", argv[1], format_size(getfilesize(argv[1])));
             return EXECUTION_SUCCESS;
 
+        }else if (strcasecmp(list->word->word, "modes") == 0){
+            modes_demo();
+            return EXECUTION_SUCCESS;
         }else if (strcasecmp(list->word->word, "SM") == 0){
             log_debug("SSH Mode> %d Args: %s", argc, argv[0]);
   //          getargs(argc, argv);
