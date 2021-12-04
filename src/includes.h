@@ -143,3 +143,5 @@
 #include "redis/hiredis.h"
 #include "redis/hiredis_ssl.h"
 #include "redis/redis_demo.c"
+
+#include "dur_demo.c"

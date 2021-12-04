@@ -1,20 +1,5 @@
 #include "includes.h"
 
-
-int dur_demo(){
-	struct timespec start, end;
-	clock_gettime(CLOCK_MONOTONIC_RAW, &start);
-	printf("Press ENTER to stop...\n");
-	getc(stdin);
-	clock_gettime(CLOCK_MONOTONIC_RAW, &end);
-	if(end.tv_nsec < start.tv_nsec){
-		end.tv_nsec += 1000000000;
-		end.tv_sec--;
-	}
-	printf("Delta time: [%ld.%09ld]s\n", (long)(end.tv_sec - start.tv_sec), (end.tv_nsec - start.tv_nsec));
-	return(0);
-}
-
 bool wg_device_exists(char *device_name){
     wg_device *device;
     bool exists = (wg_get_device(&device, device_name) == 0);
@@ -219,88 +204,21 @@ int wg_builtin (list) WORD_LIST *list;{
       return EXECUTION_FAILURE;
     }
 
-
-  //  char *new_argv[argc];
-//    int new_argc = create_submode_argc_argv(new_argv, argc, argv);
+    char *new_argv[argc];
+    if(argc>1){
+      int new_argc = create_submode_argc_argv(new_argv, argc, argv);
+    }
 
     for (int i = 1; list != NULL; list = list->next, ++i){
-        if (strcasecmp(list->word->word, "ls") == 0){
-            list_devices();
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "guard-config") == 0){
-
-            guard_config(argc, argv);
-            return EXECUTION_SUCCESS;
-}
-        if (strcasecmp(list->word->word, "config") == 0){
-            config_main(argc, argv);
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "human") == 0){
-            human_main(argc, argv);
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "dur") == 0){
-            dur_demo();
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "pwd") == 0){
-              SHELL_VAR *pwd = find_variable("PWD");
-              if (pwd != NULL){
-                log_debug("PWD: %s", get_variable_value(pwd));
-                return EXECUTION_SUCCESS;
-              }
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "bind") == 0){
-            //reproc_bind_demo(argc, argv);
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "schedule") == 0){
-            //reproc_schedule_demo(argc, argv);
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "reproc") == 0){
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "dynamic") == 0){
-            log_debug("init_dynamic1=>%d", init_dynamic1());
-            log_debug("get_dynamic1_val=>%s", get_dynamic1_val());
-            char f1[8192];
-            int ansible_interfaces_qty = -1;
-            json_object_t *facts = get_ansible_facts_json("localhost");
-            json_object_t **ansible_interfaces = json_get_array(facts, "ansible_interfaces", &ansible_interfaces_qty);
-            log_debug("ansible_fqdn=%s", json_get_string(facts, "ansible_fqdn"));
-            log_debug("ipv4:\n%s", json_serialize(json_get_object(facts, "ansible_default_ipv4"), false, 2, 0));
- //           log_debug("%d interfaces:%s", ansible_interfaces_qty, json_serialize(ansible_interfaces[0], false, 2, 0));
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "poll") == 0){
-  //          reproc_poll_demo(argc, argv);
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "sql") == 0){
-            //sql_demo();
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "functions") == 0){
-            //bash_functions = all_visible_functions();
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "json") == 0){
-            json_demo();
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "up") == 0){
-            wg_set_interface();
-            return EXECUTION_SUCCESS;
-        }
+        //////////////////////////////////////////////////////////////////////////////////
+        ///////////      Modes        ////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////
         if (strcasecmp(list->word->word, "pexec") == 0){
             log_debug("pexec Mode> %d Args: %s", argc, argv[0]);
             int result = pexec_demo(argc, argv);
             log_debug("          > %d", result);
             return EXECUTION_SUCCESS;
+
         }else if (strcasecmp(list->word->word, "redis") == 0){
             char *new_argv[argc];
             int new_argc = create_submode_argc_argv(new_argv, argc, argv);
@@ -311,15 +229,88 @@ int wg_builtin (list) WORD_LIST *list;{
               log_error("Undefined sub mode '%s'", new_argv[0]);
             }
             return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "up") == 0){
+            wg_set_interface();
+            return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "clear") == 0){
+            clear_screen();
+            return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "json") == 0){
+            json_demo();
+            return EXECUTION_SUCCESS;
+      
         }else if (strcasecmp(list->word->word, "pbcopy") == 0){
             char *new_argv[argc];
             int new_argc = create_submode_argc_argv(new_argv, argc, argv);
             pbcopy_demo(new_argc, new_argv);
             return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "dynamic") == 0){
+            log_debug("init_dynamic1=>%d", init_dynamic1());
+            log_debug("get_dynamic1_val=>%s", get_dynamic1_val());
+            char f1[8192];
+            int ansible_interfaces_qty = -1;
+            json_object_t *facts = get_ansible_facts_json("localhost");
+            json_object_t **ansible_interfaces = json_get_array(facts, "ansible_interfaces", &ansible_interfaces_qty);
+            log_debug("ansible_fqdn=%s", json_get_string(facts, "ansible_fqdn"));
+            log_debug("ipv4:\n%s", json_serialize(json_get_object(facts, "ansible_default_ipv4"), false, 2, 0));
+ //           log_debug("%d interfaces:%s", ansible_interfaces_qty, json_serialize(ansible_interfaces[0], false, 2, 0));
+            return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "devices") == 0){
+            list_devices();
+            return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "guard-config") == 0){
+            guard_config(argc, argv);
+            return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "config") == 0){
+            config_main(argc, argv);
+            return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "dur") == 0){
+            dur_demo();
+            return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "human") == 0){
+            human_main(argc, argv);
+            return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "log") == 0){
+            FILE *fp_test = fopen("/var/log/test.log","w");
+            log_add_fp(fp_test, LOG_INFO);
+            log_info("%s is good man","rxi");
+            log_set_quiet(false);
+//            log_set_level(LOG_ERROR);
+            log_trace("Hello %s", "world");
+            log_debug("Hello %s", "world");
+            log_info("Hello %s", "world");
+            log_warn("Hello %s", "world");
+            log_error("Hello %s", "world");
+            log_fatal("Hello %s", "world");
+            fclose(fp_test);
+            return EXECUTION_SUCCESS;
+
         }else if (strcasecmp(list->word->word, "trim") == 0){
             char *S = "     xxxxxxxxxxxxxxxx\0";
             log_debug("String: '%s'", S);
             return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "ini") == 0){
+          char *new_argv[argc];
+          int new_argc = create_submode_argc_argv(new_argv, argc, argv);
+          log_debug("Running ini mode '%s'", new_argv[0]);
+          if (strcasecmp(new_argv[0], "demo") == 0){
+            ini_demo(new_argc, new_argv);
+          }else{
+            log_error("Undefined sub mode '%s'", new_argv[0]);
+          }
+          return EXECUTION_SUCCESS;
+
         }else if (strcasecmp(list->word->word, "https") == 0){
             char *new_argv[argc];
             int new_argc = create_submode_argc_argv(new_argv, argc, argv);
@@ -330,22 +321,32 @@ int wg_builtin (list) WORD_LIST *list;{
               log_error("Undefined sub mode '%s'", new_argv[0]);
             }
             return EXECUTION_SUCCESS;
+
         }else if (strcasecmp(list->word->word, "tty") == 0){
             log_info("tty_height> %d", tty_height());
             log_info("cmd_lookup> %s", cmd_lookup("ls"));
             log_info("port2str> %s", port2str(443));
             return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "pwd") == 0){
+           SHELL_VAR *pwd = find_variable("PWD");
+           if (pwd != NULL){
+             log_debug("PWD: %s", get_variable_value(pwd));
+             return EXECUTION_SUCCESS;
+           }
+           return EXECUTION_SUCCESS;
         }else if (strcasecmp(list->word->word, "getfilesize") == 0){
             log_info("getfilesize> File %s -> %d Bytes", argv[1], getfilesize(argv[1]));
             log_info("getfilesize> File %s -> %s", argv[1], format_size(getfilesize(argv[1])));
             return EXECUTION_SUCCESS;
+
         }else if (strcasecmp(list->word->word, "SM") == 0){
             log_debug("SSH Mode> %d Args: %s", argc, argv[0]);
   //          getargs(argc, argv);
     //        ssh_exec_main();
             return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "vars") == 0){
+
+        }else if (strcasecmp(list->word->word, "vars") == 0){
             SHELL_VAR **variable_list, **functions_list, *var;
             register int i;
             int any_failed;
@@ -370,8 +371,8 @@ int wg_builtin (list) WORD_LIST *list;{
 
             }
             return (EXECUTION_SUCCESS);
-        }
-        if (strcasecmp(list->word->word, "dir_demo") == 0){
+
+        }else if (strcasecmp(list->word->word, "dir_demo") == 0){
 //open_files();
 //            print_unix_command_map();
  //           char *result = search_for_command ("ls", 0);
@@ -386,8 +387,9 @@ int wg_builtin (list) WORD_LIST *list;{
             set_working_directory (new_dir);
             current_dir = get_working_directory ("shell_init");
             fprintf(stderr,"current dir: %s\n", current_dir);
-        }
-        if (strcasecmp(list->word->word, "pid") == 0){
+            return (EXECUTION_SUCCESS);
+
+        }else if (strcasecmp(list->word->word, "pid") == 0){
           	struct process proc;
             int node_pid = find_process_by_name("node");
         		int ret = read_process_info(node_pid, &proc);
@@ -433,6 +435,7 @@ int wg_builtin (list) WORD_LIST *list;{
             log_debug("     kernel:             %s", kernel());
             log_debug("     uuid:               %s", uuid_buf);
             return EXECUTION_SUCCESS;
+
         }
         if (strcasecmp(list->word->word, "down") == 0){
             char *managed_interface = get_wg_interface_name();
@@ -448,17 +451,6 @@ int wg_builtin (list) WORD_LIST *list;{
               return(EXECUTION_FAILURE);
             }
             return(EXECUTION_FAILURE);
-        }
-        if (strcasecmp(list->word->word, "ini") == 0){
-          char *new_argv[argc];
-          int new_argc = create_submode_argc_argv(new_argv, argc, argv);
-          log_debug("Running ini mode '%s'", new_argv[0]);
-          if (strcasecmp(new_argv[0], "demo") == 0){
-            ini_demo(new_argc, new_argv);
-          }else{
-            log_error("Undefined sub mode '%s'", new_argv[0]);
-          }
-          return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "passh") == 0){
             char slave_name[32];
@@ -526,28 +518,8 @@ int wg_builtin (list) WORD_LIST *list;{
             log_debug("Passh Mode End");
             return EXECUTION_SUCCESS;
         }
-        if (strcasecmp(list->word->word, "tar") == 0){
-            log_debug("Tar Mode Start");
-            log_debug("Tar Mode End");
-            return EXECUTION_SUCCESS;
-        }
-        if (strcasecmp(list->word->word, "log") == 0){
-            FILE *fp_test = fopen("/var/log/test.log","w");
-            log_add_fp(fp_test, LOG_INFO);
-            log_info("%s is good man","rxi");
-            log_set_quiet(false);
-//            log_set_level(LOG_ERROR);
-            log_trace("Hello %s", "world");
-            log_debug("Hello %s", "world");
-            log_info("Hello %s", "world");
-            log_warn("Hello %s", "world");
-            log_error("Hello %s", "world");
-            log_fatal("Hello %s", "world");
-            fclose(fp_test);
-            return EXECUTION_SUCCESS;
-        }
     }
- //   log_error("Unhandled Mode- %d Arguments Received", argc);
+    log_error("Unhandled Mode- %d Arguments Received", argc);
     fflush (stdout);
     fflush (stderr);
     return (EXECUTION_SUCCESS);

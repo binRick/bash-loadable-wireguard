@@ -125,7 +125,6 @@ export WIREGUARD_LISTEN_PORT=2001 WIREGUARD_INTERFACE_NAME=wgtest13
 #test_builtin wg wg "wg down"
 #test_builtin wg wg "wg up"
 #test_builtin wg wg "wg ls"
-#test_builtin wg wg "wg pwd"
 #test_builtin wg wg "wg log"
 #test_builtin wg wg "wg passh"
 #test_builtin wg wg "wg passh -P Password -p mypassword ls /"
@@ -157,9 +156,21 @@ test_ini() {
 	test_builtin wg wg "wg ini demo"
 }
 
+test_pwd() {
+	test_builtin wg wg "wg pwd"
+}
+
+test_vars() {
+	test_builtin wg wg "wg vars"
+}
+test_log() {
+	test_builtin wg wg "wg log"
+}
+
 test_wg() {
+	test_builtin wg wg "wg dir_demo"
 	test_builtin wg wg "wg pid"
-	test_builtin wg wg "wg ls"
+	test_builtin wg wg "wg devices"
 	test_builtin wg wg "wg guard-config"
 }
 
@@ -187,6 +198,9 @@ test_tty() {
 test_redis() {
 	test_builtin wg wg "wg redis demo 127.0.0.1 6379"
 	#	test_builtin wg wg "wg redis demo 127.0.0.1 6380"
+}
+test_dur() {
+	test_builtin wg wg "wg dur"
 }
 test_trim() {
 	test_builtin wg wg "wg trim"
@@ -222,6 +236,7 @@ test_pexec() {
 }
 
 main() {
+	NAME=dur test_dur
 	NAME=config test_config
 	NAME=human test_human
 	NAME=json test_json
@@ -240,6 +255,9 @@ main() {
 	NAME=trim test_trim
 	NAME=redis test_redis
 	NAME=reproc test_reproc
+	NAME=log test_log
+	NAME=pwd test_pwd
+	NAME=vars test_vars
 	ansi --underline --blink --green --bg-black --bold "COMPLETED TESTS"
 }
 
