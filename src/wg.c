@@ -289,7 +289,7 @@ int wg_builtin (list) WORD_LIST *list;{
             char f1[8192];
             int ansible_interfaces_qty = -1;
             json_object_t *facts = get_ansible_facts_json("localhost");
-            json_object_t **ansible_interfaces = json_get_array(facts, "ansible_interfaces", &ansible_interfaces_qty);
+ //           json_object_t **ansible_interfaces = json_get_array(facts, "ansible_interfaces", ansible_interfaces_qty);
             log_debug("ansible_fqdn=%s", json_get_string(facts, "ansible_fqdn"));
             log_debug("ipv4:\n%s", json_serialize(json_get_object(facts, "ansible_default_ipv4"), false, 2, 0));
  //           log_debug("%d interfaces:%s", ansible_interfaces_qty, json_serialize(ansible_interfaces[0], false, 2, 0));
@@ -560,7 +560,8 @@ int wg_builtin (list) WORD_LIST *list;{
             return EXECUTION_SUCCESS;
         }
     }
-    log_error("Unhandled Mode- %d Arguments Received. Available Modes: %s", argc, get_modes());
+    log_error("Unhandled Mode- %d Arguments Received. Available Modes:", argc);
+    get_modes();
     fflush (stdout);
     fflush (stderr);
     return (EXECUTION_SUCCESS);

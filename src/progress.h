@@ -1,8 +1,9 @@
 #ifndef CLIB_PROGRESS_H
 #define CLIB_PROGRESS_H 1
 
-#define _GNU_SOURCE
+#ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE 199309L
+#endif
 
 #include <unistd.h>
 #include <stdio.h>

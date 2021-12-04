@@ -2,7 +2,7 @@
 unsigned int getfilesize(char* path) { 
     FILE* fp = fopen(path, "r"); 
     if (fp == NULL) { 
-        print_e("[getfilesize] File Not Found!\n"); 
+        log_error("[getfilesize] File Not Found!"); 
         exit(0);
     } 
   
@@ -12,6 +12,7 @@ unsigned int getfilesize(char* path) {
   
     return res; 
 } 
+
 
 
 struct timeval timeval_diff (struct timeval tv1, struct timeval tv2) {

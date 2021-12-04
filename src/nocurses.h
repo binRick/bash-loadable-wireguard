@@ -21,15 +21,14 @@
 #endif
 
 #define ESC    "\x1b"
-
-#define BLACK   0
+#define ncBLACK   0
 #define RED     1
 #define GREEN   2
 #define YELLOW  3
 #define BLUE    4
 #define MAGENTA 5
 #define CYAN    6
-#define WHITE   7
+#define ncWHITE   7
 
 #define BLOCK_BLINK     1
 #define BLOCK           2
@@ -47,8 +46,8 @@ struct termsize {
 };
 
 
-static int bg_color = BLACK,
-         font_color = WHITE,
+static int bg_color = ncBLACK,
+         font_color = ncWHITE,
          font_bold  = FALSE;
 
 

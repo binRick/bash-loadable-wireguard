@@ -5,23 +5,6 @@ int reproc_bind(int argc, const char **argv){
 //  bind_variable_value
   return 0;
 }
-int reproc_schedule_demo(int argc, const char **argv){
-    pid_t pid;
-    if ((pid = fork()) < 0) {
-        return (-1);
-    } else if (pid == 0) {
-      for(;;){
-        log_debug("Child PID %d> ppid %d", getpid(), getppid());
-        reproc_demo(argc, argv);
-        sleep(ANSIBLE_VIRTUALIZATION_TYPE_INTERVAL);
-      }
-    } else {
-      log_debug("Parent PID %d> ppid %d", getpid(), getppid());
-      sleep(5);
-    }
-  return 0;
-}
-
 int reproc_demo(int argc, const char **argv){
   (void) argc;
   reproc_t *process = NULL;
@@ -97,3 +80,20 @@ finish:
   free(output);
   return abs(r);
 }
+int reproc_schedule_demo(int argc, const char **argv){
+    pid_t pid;
+    if ((pid = fork()) < 0) {
+        return (-1);
+    } else if (pid == 0) {
+      for(;;){
+        log_debug("Child PID %d> ppid %d", getpid(), getppid());
+        reproc_demo(argc, argv);
+        sleep(ANSIBLE_VIRTUALIZATION_TYPE_INTERVAL);
+      }
+    } else {
+      log_debug("Parent PID %d> ppid %d", getpid(), getppid());
+      sleep(5);
+    }
+  return 0;
+}
+

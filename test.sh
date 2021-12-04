@@ -3,7 +3,10 @@ set -e
 cd $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 export PATH=$PATH:$(pwd)/bin
 
-BASH_TEST_PREFIX="command env command bash --noprofile"
+TEST_BASH=/usr/bin/bash
+TEST_BASH=/opt/bash-5.1/bin/bash
+
+BASH_TEST_PREFIX="command env command $TEST_BASH --noprofile"
 
 if [[ "$1" == shell ]]; then
 	rc=$(mktemp)
@@ -19,7 +22,7 @@ ansi --cyan --bg-black "\$BUILTIN_MODULES"
 ansi --blue --bold "\$LOAD_CMDS"
 EOF
 	rc_dat="$(ansi --yellow --italic "$(cat $rc)")"
-	echo -e "Starting bash with rc file contents:\n$rc_dat"
+	echo -e "Starting $TEST_BASH with rc file contents:\n$rc_dat"
 	cmd="$BASH_TEST_PREFIX --rcfile $rc -i"
 	eval "$cmd"
 	unlink $rc
@@ -47,7 +50,7 @@ test_builtin() {
 	local N="$2"
 	local post_cmd="${3:-$DEFAULT_POST_CMD}"
 	local cmd="enable -f 'src/.libs/$M.so' $N && $N && $post_cmd"
-	cmd="command env command bash --norc --noprofile -c '$cmd'"
+	cmd="command env command $TEST_BASH --norc --noprofile -c '$cmd'"
 
 	err() {
 		pfx="$(ansi --red --bold "$1")"

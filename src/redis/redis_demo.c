@@ -85,6 +85,7 @@ int redis_demo(int argc, char **argv) {
     log_info("GET %s: %lld\n", "counter", reply->integer);
     freeReplyObject(reply);
 
+/*
     char *LAST_UPDATE[100];
     sprintf(&LAST_UPDATE, "%lld", currentTimeMillis());
     log_debug("Setting LAST_UPDATE to %s", LAST_UPDATE);
@@ -104,6 +105,7 @@ int redis_demo(int argc, char **argv) {
     reply = redisCommand(c,"GET %s", "LAST_UPDATE");
     log_info("GET %s: %s\n", "LAST_UPDATE", reply->str);
     freeReplyObject(reply);
+*/
 
     reply = redisCommand(c,"DEL mylist");
     freeReplyObject(reply);
@@ -162,7 +164,7 @@ int redis_demo(int argc, char **argv) {
 */
 
 /*
-    char *LAST_UPDATE = sprintf("%d", currentTimeMillis());
+    char *LAST_UPDATE = sprintf("%lld", currentTimeMillis());
     log_debug("Setting LAST_UPDATE to %s", LAST_UPDATE);
     reply = redisCommand(c,"SET %s %s", "LAST_UPDATE", LAST_UPDATE);
     printf("SET: %s\n", reply->str);

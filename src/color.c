@@ -14,6 +14,128 @@ char *colors[] =
 
 
 
+void fgcolor(char *clr)
+{
+    unsigned int i;
+
+    if (
+        !strcmp(clr, "off") ||
+        !strcmp(clr, "reset") ||
+        !strcmp(clr, "clear")
+        )
+    {
+        printf(FG_RESET);
+        return;
+    }
+    else if (!strcmp(clr, "bd"))
+    {
+        printf(FG_BD);
+        return;
+    }
+    else if (!strcmp(clr, "strike"))
+    {
+        printf(FG_STRIKE);
+        return;
+    }
+    else if (!strcmp(clr, "inverse"))
+    {
+        printf(FG_INVERSE);
+        return;
+    }
+    else if (!strcmp(clr, "faint"))
+    {
+        printf(FG_FAINT);
+        return;
+    }
+    else if (
+        !strcmp(clr, "invisible") ||
+        !strcmp(clr, "hide")
+        )
+    {
+        printf(FG_INVISIBLE);
+        return;
+    }
+    else if (!strcmp(clr, "rapidblink"))
+    {
+        printf(FG_RAPID_BLINK);
+        return;
+    }
+    else if (!strcmp(clr, "blink"))
+    {
+        printf(FG_BLINK);
+        return;
+    }
+    else if (!strcmp(clr, "ired"))
+    {
+        printf(FG_I_RED);
+        return;
+    }
+    else if (!strcmp(clr, "iyellow"))
+    {
+        printf(FG_I_YELLOW);
+        return;
+    }
+    else if (!strcmp(clr, "italic"))
+    {
+        printf(FG_ITALIC);
+        return;
+    }
+    else if (!strcmp(clr, "ul"))
+    {
+        printf(FG_UL);
+        return;
+    }
+    else if (!strncmp(clr, "lt", 2))
+    {
+        printf("\033[1m");
+        clr += 2;
+    }
+    else
+    {
+        printf("\033[0m");
+    }
+
+    for (i = 0; i < 8; i++)
+    {
+        if (!strcmp(clr, colors[i]))
+        {
+            printf("\033[%dm", 30 + i);
+            break;
+        }
+    }
+    return;
+}
+
+
+void bgcolor(char *clr) {
+    unsigned int i;
+
+    if (
+        !strcmp(clr, "reset") ||
+        !strcmp(clr, "clear")
+        )
+    {
+        return bgcolor("off");
+    }
+
+    if (
+        !strcmp(clr, "off")
+        )
+    {
+         printf(BG_RESET);
+         return;
+    }
+
+    for (i = 0; i < 8; i++)
+    {
+        if (!strcmp(clr, colors[i]))
+        {
+            printf("\033[%dm", 40 + i);
+            break;
+        }
+    }
+    return;
+}
 
 ssize_t cksys(const char *msg, ssize_t r) {
   if (r >= 0) return r;
@@ -28,6 +150,46 @@ void safe_ftruncate(int fd, off_t len) {
     cksys("ftruncate()", r);
     return;
   }
+}
+
+void color_usage(void)
+{
+    printf("%sc%so%sl%so%sr%s v%0.2f - copyright (c) 2001 "
+           "Moshe Jacobson <moshe@runslinux.net>\n", FG_LTRED, FG_LTYELLOW,
+           FG_LTGREEN, FG_LTBLUE, FG_LTMAGENTA, NOCOLOR, VERSION);
+    printf("This program is free software released under the GPL. "
+           "See COPYING for info.\n\n");
+    printf("Usage:\n\n   %scolor%s [lt]%sfgcolor%s [%sbgcolor%s]\n",
+           FG_BD, NOCOLOR, FG_UL, NOCOLOR, FG_UL, NOCOLOR);
+    printf("   %scolor%s [ bd | ul | off ] %s\n   color%s --list\n\n",
+           FG_BD, NOCOLOR, FG_BD, NOCOLOR);
+
+    printf("   %sfgcolor%s and %sbgcolor%s are one of:\n",
+           FG_UL, NOCOLOR, FG_UL, NOCOLOR);
+    printf("      %sred %sgreen %syellow %sblue %smagenta %scyan %swhite%s.\n",
+           FG_LTRED, FG_LTGREEN, FG_LTYELLOW, FG_LTBLUE, FG_LTMAGENTA,
+           FG_LTCYAN, FG_LTWHITE, NOCOLOR);
+    printf("   Preceed the foreground color with %slt%s to use a light "
+           "color.\n", FG_BD, NOCOLOR);
+    printf("   %scolor ul%s and %scolor bd%s turn on %sunderline%s and "
+           "%sbold%s, respectively.\n", FG_BD, NOCOLOR, FG_BD, NOCOLOR,
+           FG_UL, NOCOLOR, FG_BD, NOCOLOR);
+    printf("   %scolor off%s turns off any coloring and resets "
+           "to default colors.\n", FG_BD, NOCOLOR);
+    printf("   %scolor --list%s shows all the possible color combinations "
+           "visually.\n\n", FG_BD, NOCOLOR);
+
+    printf("Example:\n\n");
+
+    printf("   This program can be used from shellscripts as a "
+           "convenience to allow for\n"
+           "   ansi colored text output. Simply invoke it with command "
+           "substitution. For\n"
+           "   example, in a POSIX compliant shell such as bash or ksh, "
+           "you would do:\n\n"
+           "      echo \"$(color ltyellow blue)Hi there!$(color off)\"\n\n"
+           "   to see %sHi there!%s\n\n", FG_LTYELLOW BG_BLUE, NOCOLOR);
+    return;
 }
 
 
@@ -90,7 +252,7 @@ uint64_t get_now_time() {
   return spec.tv_sec * 1000 + spec.tv_nsec / 1e6;
 }
 
-
+/*
 static SHELL_VAR *
 get_ms (SHELL_VAR *var)
 {
@@ -100,8 +262,8 @@ get_ms (SHELL_VAR *var)
 		builtin_error("Failed to get time of day: %m");
 		return NULL;
 	}
-  long TS = currentTimeMillis();
-	if (asprintf(&p, "%ld", TS) < 0) {
+  long int TS = currentTimeMillis();
+	if (asprintf(&p, "%lld", TS) < 0) {
 		builtin_error("Failed to get memory for time of day: %m");
 		return NULL;
 	}
@@ -109,7 +271,7 @@ get_ms (SHELL_VAR *var)
 	var_setvalue(var, p);
   return var;
 }
-
+*/
 static SHELL_VAR *
 get_ts (SHELL_VAR *var)
 {
@@ -144,7 +306,7 @@ assign_var (
 
 int color_builtin_load(s) char *s; {
     INIT_DYNAMIC_VAR ("TS", (char *)NULL, get_ts, assign_var);
-    INIT_DYNAMIC_VAR ("MS", (char *)NULL, get_ms, assign_var);
+//    INIT_DYNAMIC_VAR ("MS", (char *)NULL, get_ms, assign_var);
     INIT_DYNAMIC_VAR("MYPID", (char *)NULL, get_mypid, assign_var);
     SHELL_VAR *v1 = find_variable("V1");
     if (v1 != NULL)
@@ -156,6 +318,26 @@ int color_builtin_load(s) char *s; {
     return 1;
 }
 
+void list_colors()
+{
+    unsigned int bg, fg, bd;
+
+    for (bg = 0; bg < 8; bg++)
+    {
+        for (bd = 0; bd <= 1; bd++)
+        {
+            printf("%s:\n", colors[bg]);
+            for (fg = 0; fg < 8; fg++)
+            {
+                printf(" \e[%dm\e[%s%dm %s%s \e[0m",
+                       bg + 40, bd?"1;":"", fg + 30, bd?"lt":"  ", colors[fg]);
+                fflush(stdout);
+            }
+            printf("\n");
+        }
+    }
+    return;
+}
 int color_builtin(list) WORD_LIST *list; {
     int qty         = 0;
     int on_fg_style = 0;
@@ -252,191 +434,9 @@ int color_builtin(list) WORD_LIST *list; {
 }
 
 
-void list_colors(void)
-{
-    unsigned int bg, fg, bd;
-
-    for (bg = 0; bg < 8; bg++)
-    {
-        for (bd = 0; bd <= 1; bd++)
-        {
-            printf("%s:\n", colors[bg]);
-            for (fg = 0; fg < 8; fg++)
-            {
-                printf(" \e[%dm\e[%s%dm %s%s \e[0m",
-                       bg + 40, bd?"1;":"", fg + 30, bd?"lt":"  ", colors[fg]);
-                fflush(stdout);
-            }
-            printf("\n");
-        }
-    }
-    return;
-}
 
 
-void color_usage(void)
-{
-    printf("%sc%so%sl%so%sr%s v%0.2f - copyright (c) 2001 "
-           "Moshe Jacobson <moshe@runslinux.net>\n", FG_LTRED, FG_LTYELLOW,
-           FG_LTGREEN, FG_LTBLUE, FG_LTMAGENTA, NOCOLOR, VERSION);
-    printf("This program is free software released under the GPL. "
-           "See COPYING for info.\n\n");
-    printf("Usage:\n\n   %scolor%s [lt]%sfgcolor%s [%sbgcolor%s]\n",
-           FG_BD, NOCOLOR, FG_UL, NOCOLOR, FG_UL, NOCOLOR);
-    printf("   %scolor%s [ bd | ul | off ] %s\n   color%s --list\n\n",
-           FG_BD, NOCOLOR, FG_BD, NOCOLOR);
 
-    printf("   %sfgcolor%s and %sbgcolor%s are one of:\n",
-           FG_UL, NOCOLOR, FG_UL, NOCOLOR);
-    printf("      %sred %sgreen %syellow %sblue %smagenta %scyan %swhite%s.\n",
-           FG_LTRED, FG_LTGREEN, FG_LTYELLOW, FG_LTBLUE, FG_LTMAGENTA,
-           FG_LTCYAN, FG_LTWHITE, NOCOLOR);
-    printf("   Preceed the foreground color with %slt%s to use a light "
-           "color.\n", FG_BD, NOCOLOR);
-    printf("   %scolor ul%s and %scolor bd%s turn on %sunderline%s and "
-           "%sbold%s, respectively.\n", FG_BD, NOCOLOR, FG_BD, NOCOLOR,
-           FG_UL, NOCOLOR, FG_BD, NOCOLOR);
-    printf("   %scolor off%s turns off any coloring and resets "
-           "to default colors.\n", FG_BD, NOCOLOR);
-    printf("   %scolor --list%s shows all the possible color combinations "
-           "visually.\n\n", FG_BD, NOCOLOR);
-
-    printf("Example:\n\n");
-
-    printf("   This program can be used from shellscripts as a "
-           "convenience to allow for\n"
-           "   ansi colored text output. Simply invoke it with command "
-           "substitution. For\n"
-           "   example, in a POSIX compliant shell such as bash or ksh, "
-           "you would do:\n\n"
-           "      echo \"$(color ltyellow blue)Hi there!$(color off)\"\n\n"
-           "   to see %sHi there!%s\n\n", FG_LTYELLOW BG_BLUE, NOCOLOR);
-    return;
-}
-
-
-void fgcolor(char *clr)
-{
-    unsigned int i;
-
-    if (
-        !strcmp(clr, "off") ||
-        !strcmp(clr, "reset") ||
-        !strcmp(clr, "clear")
-        )
-    {
-        printf(FG_RESET);
-        return;
-    }
-    else if (!strcmp(clr, "bd"))
-    {
-        printf(FG_BD);
-        return;
-    }
-    else if (!strcmp(clr, "strike"))
-    {
-        printf(FG_STRIKE);
-        return;
-    }
-    else if (!strcmp(clr, "inverse"))
-    {
-        printf(FG_INVERSE);
-        return;
-    }
-    else if (!strcmp(clr, "faint"))
-    {
-        printf(FG_FAINT);
-        return;
-    }
-    else if (
-        !strcmp(clr, "invisible") ||
-        !strcmp(clr, "hide")
-        )
-    {
-        printf(FG_INVISIBLE);
-        return;
-    }
-    else if (!strcmp(clr, "rapidblink"))
-    {
-        printf(FG_RAPID_BLINK);
-        return;
-    }
-    else if (!strcmp(clr, "blink"))
-    {
-        printf(FG_BLINK);
-        return;
-    }
-    else if (!strcmp(clr, "ired"))
-    {
-        printf(FG_I_RED);
-        return;
-    }
-    else if (!strcmp(clr, "iyellow"))
-    {
-        printf(FG_I_YELLOW);
-        return;
-    }
-    else if (!strcmp(clr, "italic"))
-    {
-        printf(FG_ITALIC);
-        return;
-    }
-    else if (!strcmp(clr, "ul"))
-    {
-        printf(FG_UL);
-        return;
-    }
-    else if (!strncmp(clr, "lt", 2))
-    {
-        printf("\033[1m");
-        clr += 2;
-    }
-    else
-    {
-        printf("\033[0m");
-    }
-
-    for (i = 0; i < 8; i++)
-    {
-        if (!strcmp(clr, colors[i]))
-        {
-            printf("\033[%dm", 30 + i);
-            break;
-        }
-    }
-    return;
-}
-
-
-void bgcolor(char *clr)
-{
-    unsigned int i;
-
-    if (
-        !strcmp(clr, "reset") ||
-        !strcmp(clr, "clear")
-        )
-    {
-        return bgcolor("off");
-    }
-
-    if (
-        !strcmp(clr, "off")
-        )
-    {
-        return printf(BG_RESET);
-    }
-
-    for (i = 0; i < 8; i++)
-    {
-        if (!strcmp(clr, colors[i]))
-        {
-            printf("\033[%dm", 40 + i);
-            break;
-        }
-    }
-    return;
-}
 
 void color_builtin_unload(s) char *s;
 

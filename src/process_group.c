@@ -90,7 +90,6 @@ int init_process_group(struct process_group *pgroup, int target_pid, int include
 	update_process_group(pgroup);
 	return 0;
 }
-*/
 int close_process_group(struct process_group *pgroup)
 {
 	int i;
@@ -108,6 +107,7 @@ int close_process_group(struct process_group *pgroup)
 	pgroup->proclist = NULL;
 	return 0;
 }
+*/
 
 void remove_terminated_processes(struct process_group *pgroup)
 {
@@ -194,7 +194,6 @@ void update_process_group(struct process_group *pgroup)
 	if (dt < MIN_DT) return;
 	pgroup->last_update = now;
 }
-*/
 
 int remove_process(struct process_group *pgroup, int pid)
 {
@@ -205,3 +204,4 @@ int remove_process(struct process_group *pgroup, int pid)
 	delete_node(pgroup->proctable[hashkey], node);
 	return 0;
 }
+*/

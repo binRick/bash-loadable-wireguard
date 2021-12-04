@@ -22,7 +22,7 @@ const char *error_string(int error)
 {
   static THREAD_LOCAL char string[ERROR_STRING_MAX_SIZE];
 
-  int r = strerror_r(abs(error), string, ARRAY_SIZE(string));
+  int r = (int)strerror_r(abs(error), string, ARRAY_SIZE(string));
   if (r != 0) {
     return "Failed to retrieve error string";
   }

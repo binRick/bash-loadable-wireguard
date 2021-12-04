@@ -94,7 +94,7 @@ json_object_t *get_ansible_facts_json(char *hostname){
   r = reproc_start(process, ansible_argv, (reproc_options){ 
       .redirect.discard = false,
       .working_directory = "/",
-      .env.extra = envex,
+//      .env.extra = envex,
       .deadline = 1500,
       .redirect.out.type = REPROC_REDIRECT_PIPE,
       .redirect.err.type = REPROC_REDIRECT_PIPE,

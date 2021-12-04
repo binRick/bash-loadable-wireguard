@@ -35,24 +35,22 @@
  */
 
 /* Headers */
-#define HAVE_UNISTD_H
-#define HAVE_INTTYPES_H
-#define HAVE_STDLIB_H
-#define HAVE_SYS_SELECT_H
-#define HAVE_SYS_SOCKET_H
-#define HAVE_SYS_TIME_H
-#define HAVE_ARPA_INET_H
+#ifndef HAVE_NETINET_IN_H
 #define HAVE_NETINET_IN_H
+#endif
 /* #undef HAVE_WINSOCK2_H */
 
 /* Functions */
-#define HAVE_STRCASECMP
 /* #undef HAVE__STRICMP */
+#ifndef HAVE_SNPRINTF
 #define HAVE_SNPRINTF
+#endif
 /* #undef HAVE__SNPRINTF */
 
 /* Workaround for platforms without POSIX strcasecmp (e.g. Windows) */
 #ifndef HAVE_STRCASECMP
+#ifndef HAVE_STRCASECMP
+#endif
 # ifdef HAVE__STRICMP
 # define strcasecmp _stricmp
 # define HAVE_STRCASECMP

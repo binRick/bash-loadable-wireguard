@@ -45,3 +45,5 @@
 #define BG_RESET      "\033[49m"
 
 #endif
+
+//void bgcolor(char *clr);

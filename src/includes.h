@@ -7,6 +7,7 @@
 #include <sys/utsname.h>
 #include <assert.h>
 #include <stdint.h>
+#include <math.h>
 
 #if defined (HAVE_UNISTD_H)
 #  include <unistd.h>
@@ -30,7 +31,6 @@
 #ifndef __linux__
     #error "This program is linux-only."
 #endif
-#define _GNU_SOURCE
 #include <features.h>
 #include <stdio.h>
 #include <errno.h>
@@ -45,6 +45,8 @@
 #ifndef EE_CHUNK_SIZE
     #define EE_CHUNK_SIZE (8 * 1024)
 #endif
+
+#include "tools.c"
 
 #include "log.h"
 #include "log.c"
@@ -65,14 +67,16 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "time.c"
+
 #include "ini.h"
 #include "ini.c"
 #include "ini_demo.c"
 
 #include "passh.c"
 
-// #include "process_group.h"
-// #include "process_group.c"
+#include "process_group.h"
+#include "process_group.c"
 
 #include "microtar.h"
 #include "microtar.c"

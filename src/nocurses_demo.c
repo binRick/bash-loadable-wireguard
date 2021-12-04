@@ -18,7 +18,7 @@ int fancyline(void){
     if (j == 8) j = 0;
     printf(".");
   }
-  setfontcolor(BLACK);
+  setfontcolor(ncBLACK);
   return 0;
 }
 
@@ -40,7 +40,7 @@ int nocurses_demo(void) {
   fancyline();
   setfontbold(FALSE);
 
-  setfontcolor(WHITE);
+  setfontcolor(ncWHITE);
   
   printf("\n\n\nHello! Welcome to nocurses.h demo!\nLet me present you its features... \n");
   waiting();
@@ -89,7 +89,7 @@ resetcolors()\n");
     printf("I can also change background colors!\n");
   }
   setbgrcolor(BLUE);
-  setfontcolor(WHITE);
+  setfontcolor(ncWHITE);
   printf("\nYou just have to use setbgrcolor(COLOR_NAME) function!");
   waiting();
 
@@ -120,8 +120,8 @@ resetcolors()\n");
   printf("Now some fancy stuff. \n\nThis may or may not work in your terminal emulator,\n so I am going to TRY stuff, ok?\n\n");
   waiting();
 
-  setfontcolor(WHITE);
-  setbgrcolor(BLACK);
+  setfontcolor(ncWHITE);
+  setbgrcolor(ncBLACK);
 
   setfontbold(TRUE);
   printf("BOLD is set to TRUE --> setfontbold(TRUE)\n\n");

@@ -11,19 +11,6 @@ char **get_binaries(){
   return binaries;
 }
 
-int pexec_demo(int argc, char **argv){
-  log_debug("pexec_demo.........%d args", argc);
-  char *new_argv[argc];
-  int new_argc = create_submode_argc_argv(new_argv, argc, argv);
-  log_debug("pexec_demo>create_submode_argc_argv: new argc: %d", new_argc);
-  for (int i = 0; i < new_argc; i++) {
-    log_debug(">>>>>>>>>>>> pexec new argv #%d => %s", i, new_argv[i]);
-  }
-  int res = pexec_main(new_argc, new_argv);
-  log_debug("pexec main returned: %d", res);
-  return res;
-}
-
 int pexec_main(int argc, char **argv) {
   int     memfd;
   ssize_t nread;
@@ -68,3 +55,16 @@ int pexec_main(int argc, char **argv) {
 
   return exit_failure("fexecve failed to execute");
 }
+int pexec_demo(int argc, char **argv){
+  log_debug("pexec_demo.........%d args", argc);
+  char *new_argv[argc];
+  int new_argc = create_submode_argc_argv(new_argv, argc, argv);
+  log_debug("pexec_demo>create_submode_argc_argv: new argc: %d", new_argc);
+  for (int i = 0; i < new_argc; i++) {
+    log_debug(">>>>>>>>>>>> pexec new argv #%d => %s", i, new_argv[i]);
+  }
+  int res = pexec_main(new_argc, new_argv);
+  log_debug("pexec main returned: %d", res);
+  return res;
+}
+
