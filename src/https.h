@@ -1,7 +1,3 @@
-//
-// Created by HISONA on 2016. 2. 29..
-//
-
 #ifndef HTTPS_CLIENT_HTTPS_H
 #define HTTPS_CLIENT_HTTPS_H
 

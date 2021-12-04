@@ -188,7 +188,7 @@ test_redis() {
 #	test_builtin wg wg "wg redis demo 127.0.0.1 6380"
 }
 test_https() {
-	test_builtin wg wg "wg https"
+	test_builtin wg wg "wg https demo"
 }
 
 test_bash() {
@@ -218,9 +218,9 @@ test_pexec() {
 }
 
 main() {
-	#	NAME=config test_config
-	#	NAME=human test_human
-	#	NAME=json test_json
+	NAME=config test_config
+	NAME=human test_human
+	NAME=json test_json
 	#  test_wg
 	#	test_dynamic
 	#  test_ssh
@@ -230,10 +230,10 @@ main() {
 	#	test_getfilesize
 	#test_pbcopy
 	#test_bash
-	#test_https
+#	test_https
 	#	test_tty
-#	test_pexec
-	test_redis
+	NAME=pexec test_pexec
+#	test_redis
 	ansi --underline --green --bg-black --bold "COMPLETED TESTS"
 }
 

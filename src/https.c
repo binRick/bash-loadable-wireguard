@@ -1,7 +1,3 @@
-//
-// Created by HISONA on 2016. 2. 29..
-//
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

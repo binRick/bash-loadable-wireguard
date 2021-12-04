@@ -2,16 +2,20 @@
 
 
 int https_demo(int argc, char **argv) {
-    char *url;
-    char data[1024], response[4096];
-    int  i, ret, size;
+  char *url;
+  char data[1024], response[4096];
+  int  i, ret, size;
 
-    HTTP_INFO hi1, hi2;
+  HTTP_INFO hi1, hi2;
 
+  log_debug("https.................");
+  return 0;
+}
 
+int xxxxxxxxxxxxxxxxxx(){
     // Init http session. verify: check the server CA cert.
-    http_init(&hi1, FALSE);
-    http_init(&hi2, TRUE);
+    //http_init(&hi1, FALSE);
+    //http_init(&hi2, TRUE);
 
 /*
     url = "https://localhost:8080/upload";
@@ -29,6 +33,7 @@ int https_demo(int argc, char **argv) {
     printf("return body: %s \n", response);
 */
 
+/*
     url = "https://localhost:8080/upload";
 
     if(http_open(&hi1, url) < 0)
@@ -85,7 +90,6 @@ int https_demo(int argc, char **argv) {
     printf("return body: %s \n", response);
 
 
-/*
     // Test a http get method.
     url = "http://httpbin.org/get?message=https_client";
 
@@ -173,7 +177,6 @@ int https_demo(int argc, char **argv) {
     }
 
     error:
-*/
 
 error:
 
@@ -181,4 +184,5 @@ error:
     http_close(&hi2);
 
     return 0;
+*/
 }

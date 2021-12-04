@@ -319,7 +319,12 @@ int wg_builtin (list) WORD_LIST *list;{
         }else if (strcasecmp(list->word->word, "https") == 0){
             char *new_argv[argc];
             int new_argc = create_submode_argc_argv(new_argv, argc, argv);
-            //https_demo(new_argc, new_argv);
+            log_debug("Running sub mode '%s'", new_argv[0]);
+            if (strcasecmp(new_argv[0], "demo") == 0){
+             // https_demo(new_argc, new_argv);
+            }else{
+              log_error("Undefined sub mode '%s'", new_argv[0]);
+            }
             return EXECUTION_SUCCESS;
         }else if (strcasecmp(list->word->word, "tty") == 0){
             log_info("tty_height> %d", tty_height());
