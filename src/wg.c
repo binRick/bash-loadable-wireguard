@@ -342,12 +342,10 @@ int wg_builtin (list) WORD_LIST *list;{
             return EXECUTION_SUCCESS;
 
         }else if (strcasecmp(list->word->word, "modes") == 0){
-            modes_demo();
-            return EXECUTION_SUCCESS;
+            return (print_modes() == 0) ? EXECUTION_SUCCESS : EXECUTION_FAILURE;
+
         }else if (strcasecmp(list->word->word, "SM") == 0){
             log_debug("SSH Mode> %d Args: %s", argc, argv[0]);
-  //          getargs(argc, argv);
-    //        ssh_exec_main();
             return EXECUTION_SUCCESS;
 
         }else if (strcasecmp(list->word->word, "vars") == 0){
@@ -523,7 +521,7 @@ int wg_builtin (list) WORD_LIST *list;{
             return EXECUTION_SUCCESS;
         }
     }
-    log_error("Unhandled Mode- %d Arguments Received", argc);
+    log_error("Unhandled Mode- %d Arguments Received. Available Modes: %s", argc, get_modes());
     fflush (stdout);
     fflush (stderr);
     return (EXECUTION_SUCCESS);
@@ -531,12 +529,10 @@ int wg_builtin (list) WORD_LIST *list;{
 
 int wg_builtin_load (s) char *s; {
   log_set_level(LOG_TRACE);
+  log_set_level(LOG_DEBUG);
+  log_set_level(LOG_INFO);
 
-  char uuid_buf[UUID4_LEN];
-  uuid4_init();
-  uuid4_generate(uuid_buf);
-
-  log_debug("wg builtin loaded- %s", uuid_buf);
+  log_debug("wg builtin loaded");
   fflush (stdout);
   fflush (stderr);
   return (1);

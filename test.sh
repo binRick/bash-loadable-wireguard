@@ -264,6 +264,7 @@ ok_main() {
 	NAME=vars test_vars
 }
 main() {
+  ok_main
   NAME=modes test_modes
 	ansi --underline --blink --green --bg-black --bold "COMPLETED TESTS"
 }
