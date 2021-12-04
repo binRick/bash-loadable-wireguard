@@ -34,8 +34,8 @@ DEFAULT_POST_CMD="echo -e \"MYPID=\$MYPID\nTS=\$TS\nMS=\$MS\""
 
 # length of maximum padding
 padding1="        "
-padding2="                            "
-padding3="                                     "
+padding2="                          "
+padding3="                                    "
 padding4="                                              "
 padding="..............................................."
 
@@ -64,8 +64,7 @@ test_builtin() {
 		msg="$(ansi --yellow --italic "$2")"
 		if [[ "$COLORS" == 1 ]]; then
 			mc="$pfx::$post_cmd"
-			printf "%s: <%d>%s[%s]%s(%s)%s%s%s\n" \
-				"$(ansi --green --bg-black OK)" \
+			printf "<%d>%s[%s]%s(%s)%s%s%s\n" \
 				"$$" \
 				"${padding1:${#$}}" \
 				"$pfx" \
@@ -146,20 +145,21 @@ export WIREGUARD_LISTEN_PORT=2001 WIREGUARD_INTERFACE_NAME=wgtest13
 
 test_dynamic() {
 	test_builtin wg wg "wg dynamic"
-
 }
+
 test_ssh() {
 	test_builtin wg wg "wg SM"
 	# localhost rick 2d4a8138-e118-402a-9b5f-82d545108b9f date"
 
 }
+
 test_ini() {
 	test_builtin wg wg "wg ini demo"
 }
+
 test_wg() {
 	test_builtin wg wg "wg pid"
 	test_builtin wg wg "wg ls"
-	test_builtin wg wg "wg passh -P Password -p mypassword ls /"
 	test_builtin wg wg "wg guard-config"
 }
 
@@ -186,7 +186,7 @@ test_tty() {
 
 test_redis() {
 	test_builtin wg wg "wg redis demo 127.0.0.1 6379"
-#	test_builtin wg wg "wg redis demo 127.0.0.1 6380"
+	#	test_builtin wg wg "wg redis demo 127.0.0.1 6380"
 }
 test_trim() {
 	test_builtin wg wg "wg trim"
@@ -209,8 +209,8 @@ encode_binary() { \cat $1 | base64 -w0; }
 test_pexec() {
 	#NAME=pexec test_builtin wg wg "wg pexec ls /boot" < <(echo $_ENCODED_ls | base64 -d)
 	NAME=pbcopy test_builtin wg wg "wg pexec ls /boot" </usr/bin/ls
-#	NAME=pbcopy test_builtin wg wg "wg pexec guard list" </opt/vpntech-binaries/x86_64/guard
-#	NAME=pbcopy test_builtin wg wg "wg pexec json2sh" </opt/vpntech-binaries/x86_64/json2sh
+	#	NAME=pbcopy test_builtin wg wg "wg pexec guard list" </opt/vpntech-binaries/x86_64/guard
+	#	NAME=pbcopy test_builtin wg wg "wg pexec json2sh" </opt/vpntech-binaries/x86_64/json2sh
 	#test_builtin wg wg "wg pexec w" < <(echo $_ENCODED_w | base64 -d)
 	#test_builtin wg wg "wg pexec cat /etc/passwd" < <(echo $_ENCODED_cat | base64 -d)
 	#  test_builtin wg wg "wg pexec ansible-playbook --version" < <(echo $_ENCODED_ap|base64 -d)
@@ -225,22 +225,22 @@ main() {
 	NAME=config test_config
 	NAME=human test_human
 	NAME=json test_json
-	#  test_wg
-	#	test_dynamic
+	NAME=wg test_wg
+	NAME=dynamic test_dynamic
 	#  test_ssh
 	#  test_sql
-	#  test_reproc
 	#  test_reproc_poll
-	#	test_getfilesize
-	#test_pbcopy
+	test_getfilesize
+	test_pbcopy
 	#test_bash
-#	test_https
+	#	test_https
 	NAME=tty test_tty
 	NAME=pexec test_pexec
 	NAME=ini test_ini
 	NAME=trim test_trim
-#	test_redis
-	ansi --underline --green --bg-black --bold "COMPLETED TESTS"
+	NAME=redis test_redis
+	NAME=reproc test_reproc
+	ansi --underline --blink --green --bg-black --bold "COMPLETED TESTS"
 }
 
 main
