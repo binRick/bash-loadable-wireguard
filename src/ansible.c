@@ -1,7 +1,6 @@
 
-char *extract_stdout_json(char *output){
-    char sj[strlen(output)];
-    char s[strlen(output)];
+char *extract_stdout_json(char *output, char *sj){
+    char s[strlen(output)+1];
     strcpy(s, output);
     char* token = strtok(s, " ");
     int qty = 0;
@@ -54,7 +53,7 @@ json_object_t *get_ansible_facts_json(char *hostname){
     "\0", 
     hostname
   );
-  char *ansible_argv[] = { 
+  char const *ansible_argv[] = { 
     "/usr/bin/env", 
         "command", "ansible", 
           hostname, "-i", hostname_comma, 
@@ -135,7 +134,7 @@ json_object_t *get_ansible_facts_json(char *hostname){
 
 finish:
   int forked_pid = reproc_pid(process);
-  char *stderr_content = reproc_strerror(r);
+  const char *stderr_content = reproc_strerror(r);
   if (r < 0){
     log_debug("err> %s", stderr_content);
   }
@@ -187,11 +186,7 @@ finish:
   char *ansible_user_shell = json_get_string(json_get_object(json.root, "ansible_facts"), "ansible_user_shell");
   char *ansible_service_mgr = json_get_string(json_get_object(json.root, "ansible_facts"), "ansible_service_mgr");
   char dt[100];
-  fprintf(dt, 
-"Delta time: [%ld.%09ld]s"
-"\0",
-(long)(end.tv_sec - start.tv_sec), (end.tv_nsec - start.tv_nsec)
-);
+  log_debug("Delta time: [%ld.%09ld]s" "\0", (long)(end.tv_sec - start.tv_sec), (end.tv_nsec - start.tv_nsec) );
 
   log_debug(""
     "\n** %s **"

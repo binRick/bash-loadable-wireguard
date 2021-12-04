@@ -1,5 +1,5 @@
 
-char **modes[10000];
+char *modes[10000];
 
 void *get_modes(){
   char          line[SC_MAX_ARG_LENGTH];
@@ -13,9 +13,8 @@ void *get_modes(){
   while (fgets(line, (int)(sizeof line), fp) != NULL) {
     chomp(line);
     line_count++;
-    sprintf(modes,"%s %s",&modes, line);
+    log_info("mode: %s", line);
   }
-  log_info("modes: %s", modes);
   return NULL;
 }
 
