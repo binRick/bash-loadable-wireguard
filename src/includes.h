@@ -166,3 +166,13 @@
 #include "term.h"
 #include "term.c"
 #include "term_demo.c"
+
+#include <sys/ioctl.h>
+
+#include "spin.h"
+#include "spin_demo.c"
+
+#include "nocurses.h"
+#include "nocurses_demo.c"
+#include "chalk.h"
+#include "chalk_demo.c"

@@ -88,6 +88,19 @@ int str2int(const char *str, int *integer)
     return 0;
 }
 
+
+
+
+
+int winsize_demo(int argc, char **argv){
+  struct winsize sz;
+
+  ioctl(0, TIOCGWINSZ, &sz);
+  printf("%i %i %i %i\n", sz.ws_col, sz.ws_row, sz.ws_xpixel, sz.ws_ypixel);
+  return 0;
+}
+
+
 /**
  * @param str must not be null
  * @param integer must be a valid pointer.

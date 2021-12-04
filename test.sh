@@ -241,6 +241,10 @@ test_modes(){
 	test_builtin wg wg "wg qr demo"
 	test_builtin wg wg "wg table demo"
 	test_builtin wg wg "wg term demo"
+	test_builtin wg wg "wg winsize demo"
+	test_builtin wg wg "wg chalk demo"
+	test_builtin wg wg "wg spin demo"
+	test_builtin wg wg "wg nocurses demo"
 }
 
 ok_main() {
