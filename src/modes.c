@@ -22,7 +22,7 @@ char *get_modes(){
 
 int print_modes(){
   char *modes = get_modes();
-  printf("%s", modes);
+  printf("%s\n", modes);
   return 0;
 }
 
