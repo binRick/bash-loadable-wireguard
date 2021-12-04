@@ -128,7 +128,6 @@ export WIREGUARD_LISTEN_PORT=2001 WIREGUARD_INTERFACE_NAME=wgtest13
 #test_builtin wg wg "wg ls"
 #test_builtin wg wg "wg pwd"
 #test_builtin wg wg "wg log"
-#test_builtin wg wg "wg ini"
 #test_builtin wg wg "wg passh"
 #test_builtin wg wg "wg passh -P Password -p mypassword ls /"
 #test_builtin wg wg "wg passh -P password -p 1e80e41c-78a6-4870-92d4-fddd829ed8c9 passwd T"
@@ -154,11 +153,13 @@ test_ssh() {
 	# localhost rick 2d4a8138-e118-402a-9b5f-82d545108b9f date"
 
 }
+test_ini() {
+	test_builtin wg wg "wg ini demo"
+}
 test_wg() {
 	test_builtin wg wg "wg pid"
 	test_builtin wg wg "wg ls"
 	test_builtin wg wg "wg passh -P Password -p mypassword ls /"
-	test_builtin wg wg "wg ini"
 	test_builtin wg wg "wg guard-config"
 }
 
@@ -186,6 +187,9 @@ test_tty() {
 test_redis() {
 	test_builtin wg wg "wg redis demo 127.0.0.1 6379"
 #	test_builtin wg wg "wg redis demo 127.0.0.1 6380"
+}
+test_trim() {
+	test_builtin wg wg "wg trim"
 }
 test_https() {
 	test_builtin wg wg "wg https demo"
@@ -231,8 +235,10 @@ main() {
 	#test_pbcopy
 	#test_bash
 #	test_https
-	#	test_tty
+	NAME=tty test_tty
 	NAME=pexec test_pexec
+	NAME=ini test_ini
+	NAME=trim test_trim
 #	test_redis
 	ansi --underline --green --bg-black --bold "COMPLETED TESTS"
 }

@@ -1,19 +1,25 @@
-/**
- * Copyright (c) 2020 rxi
- *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the MIT license. See `log.c` for details.
- */
+#define PRINT_PREFIX "🍦"
+
+#define MAX_ROW 64
+#define MAX_COLUMN 256
+#define LOG_VERSION "0.1.0"
 
 #ifndef LOG_H
 #define LOG_H
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <time.h>
+static const char *_format_colors[] = {
+    "",
+    "\x1b[32m\"%s\"\x1b[0m",
+    "\x1b[34m%d\x1b[0m",
+    "\x1b[34m%ld\x1b[0m",
+    "\x1b[34m%#x\x1b[0m",
+    "\x1b[34m%.2f\x1b[0m",
+    "\x1b[34m%.4lf\x1b[0m",
+    "\x1b[34m%p\x1b[0m"
+};
 
-#define LOG_VERSION "0.1.0"
+static const char *_level_colors[] = {"\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m"};
+
 
 typedef struct {
   va_list ap;

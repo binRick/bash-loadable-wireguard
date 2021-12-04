@@ -395,15 +395,7 @@ char *shell()
 }
 
 
-
-
-
-
-
-
-
-void lowerCase(char *str)
-{
+void lowerCase(char *str) {
 	const int len = strlen(str);
 	int i;
 	for (i = 0; i < len; i += 1)
@@ -419,3 +411,48 @@ void upperCase(char *str)
 		if (str[i] >= 'a' && str[i] <= 'z')
 			str[i] += 'A' - 'a';
 }
+
+
+
+
+void str_trim(char *p_str)
+{
+    char *p_tmp = p_str;
+
+    while (*p_str != '\0')
+    {
+        if (*p_str != ' ')
+        {
+            *p_tmp++ = *p_str;
+        }
+        ++p_str;
+    }
+    *p_tmp = '\0';
+}
+
+void str_right_trim(char *p_str)
+{
+    char *p_tmp = p_str + strlen(p_str) - 1;
+    while (*p_tmp == ' ')
+    {
+        *p_tmp = '\0';
+        p_tmp--;
+    }
+}
+
+void str_left_trim(char *p_str)
+{
+    char *p_tmp = p_str;
+    while (*p_tmp == ' ')
+    {
+        p_tmp++;
+    }
+    while (*p_tmp != '\0')
+    {
+        *p_str = *p_tmp;
+        p_str++;
+        p_tmp++;
+    }
+    *p_str = '\0';
+}
+

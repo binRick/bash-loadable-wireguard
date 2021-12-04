@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <time.h>
 #include "log.h"
 
 #define MAX_CALLBACKS 32
@@ -30,8 +34,8 @@ static void stdout_callback(log_Event *ev) {
   char buf[16];
   buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
   fprintf(
-    ev->udata, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
-    buf, level_colors[ev->level], level_strings[ev->level],
+    ev->udata, "%s %s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
+    PRINT_PREFIX, buf, level_colors[ev->level], level_strings[ev->level],
     ev->file, ev->line);
   vfprintf(ev->udata, ev->fmt, ev->ap);
   fprintf(ev->udata, "\n");

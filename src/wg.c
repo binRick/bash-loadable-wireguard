@@ -316,6 +316,10 @@ int wg_builtin (list) WORD_LIST *list;{
             int new_argc = create_submode_argc_argv(new_argv, argc, argv);
             pbcopy_demo(new_argc, new_argv);
             return EXECUTION_SUCCESS;
+        }else if (strcasecmp(list->word->word, "trim") == 0){
+            char *S = "     xxxxxxxxxxxxxxxx\0";
+            log_debug("String: '%s'", S);
+            return EXECUTION_SUCCESS;
         }else if (strcasecmp(list->word->word, "https") == 0){
             char *new_argv[argc];
             int new_argc = create_submode_argc_argv(new_argv, argc, argv);
@@ -446,21 +450,17 @@ int wg_builtin (list) WORD_LIST *list;{
             return(EXECUTION_FAILURE);
         }
         if (strcasecmp(list->word->word, "ini") == 0){
-//          ini_t *vpntc = ini_load("/etc/sysconfig/vpntech");
-          ini_t *config1 = ini_load("/etc/wireguard/guard0.conf");
-          const char *PrivateKey = ini_get(config1, "Interface", "PrivateKey");
-          if (PrivateKey) {
-            printf("[INI]    PrivateKey: %s\n", PrivateKey);
-          }
-          ini_t *config = ini_load("./test.ini");
-          const char *name = ini_get(config, "owner", "name");
-          if (name) {
-            printf("[INI]    name: %s\n", name);
+          char *new_argv[argc];
+          int new_argc = create_submode_argc_argv(new_argv, argc, argv);
+          log_debug("Running ini mode '%s'", new_argv[0]);
+          if (strcasecmp(new_argv[0], "demo") == 0){
+            ini_demo(new_argc, new_argv);
+          }else{
+            log_error("Undefined sub mode '%s'", new_argv[0]);
           }
           return EXECUTION_SUCCESS;
         }
         if (strcasecmp(list->word->word, "passh") == 0){
-
             char slave_name[32];
             pid_t pid;
             struct termios orig_termios;
@@ -560,14 +560,14 @@ int wg_builtin_load (s) char *s; {
   uuid4_init();
   uuid4_generate(uuid_buf);
 
-//  log_debug("wg builtin loaded- %s", uuid_buf);
+  log_debug("wg builtin loaded- %s", uuid_buf);
   fflush (stdout);
   fflush (stderr);
   return (1);
 }
 
 void wg_builtin_unload (s) char *s; {
-//  log_debug("wg builtin unloaded");
+  log_debug("wg builtin unloaded");
   fflush (stdout);
   fflush (stderr);
 }
