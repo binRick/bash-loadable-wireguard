@@ -14,9 +14,7 @@ unsigned int getfilesize(char* path) {
 } 
 
 
-struct timeval
-timeval_diff (struct timeval tv1, struct timeval tv2)
-{
+struct timeval timeval_diff (struct timeval tv1, struct timeval tv2) {
     struct timeval diff;
 
     diff.tv_sec = tv2.tv_sec - tv1.tv_sec;
@@ -30,9 +28,18 @@ timeval_diff (struct timeval tv1, struct timeval tv2)
     return diff;
 }
 
+bool string_to_int(const char * value, int * result){
+  intmax_t i;
+  if (legal_number (value, &i)) {
+    *result = (int) i;
+    return true;
+  }
+  return false;
+}
 
-void
-clear_screen (void) {
+
+
+void clear_screen (void) {
     printf("\e[1;1H\e[2J");
 }
 
@@ -110,8 +117,7 @@ bool getuid_by_pid(pid_t pid, uid_t *uid)
     return true;
 }
 
-bool getgid_by_pid(pid_t pid, gid_t *gid)
-{
+bool getgid_by_pid(pid_t pid, gid_t *gid) {
     char status[128];
     char line[128];
     int i = 10;
@@ -150,9 +156,7 @@ int create_submode_argc_argv(char **new_argv, int argc, char **argv){
   return new_argc;
 }
 
-const char *
-container_type (void)
-{
+const char *container_type (void) {
 	struct stat  statbuf;
 	char         buffer[1024];
 	FILE        *f;
