@@ -1,3 +1,6 @@
+#ifndef _BL_INCLUDES_
+#define _BL_INCLUDES_
+
 #include <config.h>
 #include <stdlib.h>
 #include <time.h>
@@ -180,3 +183,9 @@
 #include "nocurses_demo.c"
 #include "chalk.h"
 #include "chalk_demo.c"
+
+#include "tcolor.h"
+#include "tcolor_demo.c"
+
+
+#endif

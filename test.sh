@@ -275,9 +275,20 @@ ok_main() {
 	NAME=pexec test_pexec
 }
 
+test_tcolor(){
+	test_builtin wg wg "wg progress demo"
+  test_builtin wg wg "wg tcolor demo"
+}
+
+dev_main(){
+	#NAME=pexec test_pexec
+	NAME=tcolor test_tcolor
+
+}
 main() {
-  ok_main
-  NAME=modes test_modes
+  #ok_main
+  dev_main
+  #NAME=modes test_modes
 	ansi --underline --blink --green --bg-black --bold "COMPLETED TESTS"
 }
 

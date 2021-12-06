@@ -430,6 +430,10 @@ int wg_builtin (list) WORD_LIST *list;{
             fprintf(stderr,"current dir: %s\n", current_dir);
             return (EXECUTION_SUCCESS);
 
+        }else if (strcasecmp(list->word->word, "tcolor") == 0){
+            tcolor_demo();
+            return (EXECUTION_SUCCESS);
+
         }else if (strcasecmp(list->word->word, "pid") == 0){
           	struct process proc;
             int node_pid = find_process_by_name("node");

@@ -1,4 +1,56 @@
 
+
+/* Declarations for functions defined in locale.c */
+extern char *get_locale_var __P((char *));
+
+/*from fnxform.c*/
+static char *
+curencoding ()
+{
+  char *loc;
+#if defined (HAVE_LOCALE_CHARSET)
+  loc = (char *)locale_charset ();
+  return loc;
+#else
+  char *dot, *mod;
+
+  loc = get_locale_var ("LC_CTYPE");
+  if (loc == 0 || *loc == 0)
+    return "";
+  dot = strchr (loc, '.');
+  if (dot == 0)
+    return loc;
+  mod = strchr (dot, '@');
+  if (mod)
+    *mod = '\0';
+  return ++dot;
+#endif
+}  
+
+static char *
+encoding () {
+  char * cur = curencoding();
+  if ((strncmp(cur, "UTF-8",5) != 0) &&
+      (strncmp(cur, "ISO-8859-1",10) != 0))
+    {
+      builtin_warning (_("warning: unsupported encoding %s defaulting to ISO8859-1\n"), cur);
+      cur = "ISO-8859-1";
+    }
+  return cur;
+}
+
+
+
+/* hashing using djb2...gives unique hashes for the above commands*/
+unsigned long long hash(unsigned char *str) {
+  unsigned long long hash = 5381;
+  int c;
+  while (c = *str++)
+    hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+  return hash;
+}
+
+
 unsigned int getfilesize(char* path) { 
     FILE* fp = fopen(path, "r"); 
     if (fp == NULL) { 
