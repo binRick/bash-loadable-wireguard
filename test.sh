@@ -4,7 +4,7 @@ cd $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 export PATH=$PATH:$(pwd)/bin
 
 TEST_BASH=/usr/bin/bash
-TEST_BASH=/opt/bash-5.1/bin/bash
+TEST_BASH=/opt/bash-5.2/bin/bash
 
 BASH_TEST_PREFIX="command env command $TEST_BASH --noprofile"
 
@@ -186,8 +186,8 @@ _ENCODED_cat="$(\cat /usr/bin/cat | base64 -w0)"
 _ENCODED_ls="$(\cat /usr/bin/ls | base64 -w0)"
 _ENCODED_pwd="$(\cat /usr/bin/pwd | base64 -w0)"
 _ENCODED_a="$(\cat /usr/bin/ansible | base64 -w0)"
-_ENCODED_ap_s="$(\cat ~/pyinstaller-ansible-playbook/binaries/fedora35/dist-static/ansible-playbook | base64 -w0)"
-_ENCODED_ap="$(\cat ~/pyinstaller-ansible-playbook/binaries/fedora35/dist/ansible-playbook | base64 -w0)"
+#_ENCODED_ap_s="$(\cat ~/pyinstaller-ansible-playbook/binaries/fedora35/dist-static/ansible-playbook | base64 -w0)"
+#_ENCODED_ap="$(\cat ~/pyinstaller-ansible-playbook/binaries/fedora35/dist/ansible-playbook | base64 -w0)"
 
 test_getfilesize() {
 	test_builtin wg wg "wg getfilesize /etc/passwd"
@@ -281,8 +281,9 @@ test_tcolor(){
 }
 
 dev_main(){
+  test_wg
 	#NAME=pexec test_pexec
-	NAME=tcolor test_tcolor
+	#NAME=tcolor test_tcolor
 
 }
 main() {
