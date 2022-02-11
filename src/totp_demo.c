@@ -17,8 +17,7 @@ int32_t FillFromURANDOM(uint8_t* out, size_t outlen){
     return bread < outlen ? -1 : bread;
 }
 
-void demo_ansi_qrcode()
-{
+void demo_ansi_qrcode(){
     char secret[33] = {0};
     generate_random_secret(secret, 33, FillFromURANDOM);
     printf("Secret: %s\n", secret);
@@ -38,8 +37,6 @@ void demo_totp_calculation(){
     int otp = compute_totp(secret, secretlen, now, 30, 6);
     printf("Current OTP code: %06d\n", otp);
 }
-
-
 
 
 int totp_new_secret(void){
@@ -79,13 +76,11 @@ int totp_validate_secret(void){
     time_t now = time(0);
     size_t secretlen = base32decode(encoded_secret, strnlen(encoded_secret, 512), secret, 33);
     int otp = compute_totp(secret, secretlen, now, 30, 6);
-    //printf("Secret Length:\t\t%d\n", secretlen);
+    printf("Secret Length:\t\t%d\n", secretlen);
     printf("Current OTP code:\t%06d\n", otp);
-/*
-    size_t secretlet = 20;
-*/
     return 0;
 }
+
 
 
 
