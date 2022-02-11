@@ -188,8 +188,6 @@
 #include "tcolor_demo.c"
 
 
-#include "base32codec.h"
-
 #include "sha1.c"
 #include "qrcode/qrcode.c"
 #include "base32codec.c"

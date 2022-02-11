@@ -219,8 +219,20 @@ int wg_builtin (list) WORD_LIST *list;{
             log_debug("          > %d", result);
             return EXECUTION_SUCCESS;
 
-        }else if (strcasecmp(list->word->word, "totp") == 0){
-            totp_demo();
+        }else if (strcasecmp(list->word->word, "totp-random-secret") == 0){
+            totp_new_secret();
+            return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "totp-qrcode") == 0){
+            totp_qrcode_demo();
+            return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "totp-validate-random-secret") == 0){
+            totp_validate_random_secret();
+            return EXECUTION_SUCCESS;
+
+        }else if (strcasecmp(list->word->word, "totp-validate-secret") == 0){
+            totp_validate_secret();
             return EXECUTION_SUCCESS;
 
         }else if (strcasecmp(list->word->word, "term") == 0){
