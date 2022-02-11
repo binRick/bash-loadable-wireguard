@@ -170,6 +170,9 @@ test_log() {
 	test_builtin wg wg "wg log"
 }
 
+test_totp() {
+	test_builtin wg wg "wg totp"
+}
 test_wg() {
 	test_builtin wg wg "wg dir_demo"
 	test_builtin wg wg "wg pid"
@@ -281,7 +284,8 @@ test_tcolor(){
 }
 
 dev_main(){
-  test_wg
+  #test_wg
+  test_totp
 	#NAME=pexec test_pexec
 	#NAME=tcolor test_tcolor
 

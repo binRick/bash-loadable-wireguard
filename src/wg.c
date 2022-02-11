@@ -219,6 +219,10 @@ int wg_builtin (list) WORD_LIST *list;{
             log_debug("          > %d", result);
             return EXECUTION_SUCCESS;
 
+        }else if (strcasecmp(list->word->word, "totp") == 0){
+            totp_demo();
+            return EXECUTION_SUCCESS;
+
         }else if (strcasecmp(list->word->word, "term") == 0){
             char *new_argv[argc];
             int new_argc = create_submode_argc_argv(new_argv, argc, argv);
