@@ -49,6 +49,7 @@
     #define EE_CHUNK_SIZE (8 * 1024)
 #endif
 
+
 #include "tools.c"
 
 #include "log.h"
@@ -141,6 +142,7 @@
 
 #include "jwt_demo.c"
 
+#include "log_demo.h"
 
 /*
 #include "https.h"
@@ -193,5 +195,6 @@
 #include "base32codec.c"
 #include "totp.c"
 #include "totp_demo.c"
+
 
 #endif

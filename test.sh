@@ -171,7 +171,7 @@ test_log() {
 }
 
 test_totp() {
-	test_builtin wg wg "wg totp"
+	test_builtin wg wg "wg totp-validate-random-secret"
 }
 test_wg() {
 	test_builtin wg wg "wg dir_demo"

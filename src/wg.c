@@ -228,7 +228,21 @@ int wg_builtin (list) WORD_LIST *list;{
             return EXECUTION_SUCCESS;
 
         }else if (strcasecmp(list->word->word, "totp-validate-random-secret") == 0){
-            totp_validate_random_secret();
+            int QTY = 5000;
+            int ON = 0;
+            static struct utsname sysInfo;
+            struct timespec uname_start, uname_end;
+            clock_gettime(CLOCK_MONOTONIC_RAW, &uname_start);
+            while(ON<QTY){
+              totp_validate_random_secret();
+              clock_gettime(CLOCK_MONOTONIC_RAW, &uname_end);
+              if(uname_end.tv_nsec < uname_start.tv_nsec){
+                uname_end.tv_nsec += 1000000000;
+                uname_end.tv_sec--;
+              }
+            ON++;
+          }
+            fprintf(stdout, "Completed %d totp-validate-random-secret's in: [%ld.%09ld]s\n", ON, (long)(uname_end.tv_sec - uname_start.tv_sec), (uname_end.tv_nsec - uname_start.tv_nsec));
             return EXECUTION_SUCCESS;
 
         }else if (strcasecmp(list->word->word, "totp-validate-secret") == 0){
@@ -337,10 +351,9 @@ int wg_builtin (list) WORD_LIST *list;{
 
         }else if (strcasecmp(list->word->word, "log") == 0){
             FILE *fp_test = fopen("/var/log/test.log","w");
-            log_add_fp(fp_test, LOG_INFO);
             log_info("%s is good man","rxi");
             log_set_quiet(false);
-//            log_set_level(LOG_ERROR);
+            log_set_level(LOG_DEBUG);
             log_trace("Hello %s", "world");
             log_debug("Hello %s", "world");
             log_info("Hello %s", "world");
@@ -466,7 +479,7 @@ int wg_builtin (list) WORD_LIST *list;{
               uname_end.tv_nsec += 1000000000;
               uname_end.tv_sec--;
             }
-            log_debug("Completed Uname in: [%ld.%09ld]s\n", (long)(uname_end.tv_sec - uname_start.tv_sec), (uname_end.tv_nsec - uname_start.tv_nsec));
+            fprintf(stderr, "Completed Uname in: [%ld.%09ld]s\n", (long)(uname_end.tv_sec - uname_start.tv_sec), (uname_end.tv_nsec - uname_start.tv_nsec));
 
             char uuid_buf[UUID4_LEN];
             uuid4_init();
