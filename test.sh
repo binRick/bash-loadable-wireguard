@@ -292,8 +292,10 @@ dev_main(){
 
 }
 main() {
+  test_builtin wg wg "wg sb"
+  
   #ok_main
-  dev_main
+  #dev_main
   #NAME=modes test_modes
 	ansi --underline --blink --green --bg-black --bold "COMPLETED TESTS"
 }

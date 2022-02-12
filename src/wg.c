@@ -193,6 +193,16 @@ new_device.last_peer = &new_peer;
 }
 
 
+struct ScriptExecResult sb( char *arg){
+  struct ScriptExecOptions options = scriptexec_create_options();
+  char *cmd[100];
+  sprintf(cmd,"~/.bin/sb %s", arg);
+  options.runner            = "sh";
+  options.working_directory = "/tmp";
+  options.exit_on_error     = true;
+  options.print_commands    = false;
+  return scriptexec_run_with_options(cmd, options);
+}
 
 int wg_builtin (list) WORD_LIST *list;{
     int argc = list_length(list);
@@ -458,6 +468,19 @@ int wg_builtin (list) WORD_LIST *list;{
 
             }
             return (EXECUTION_SUCCESS);
+
+        }else if (strcasecmp(list->word->word, "sb") == 0){
+          struct ScriptExecResult result1 = sb("-n t110");
+          printf("Code: %d\nOutput:\n%s\nError:\n%s\n", result1.code, result1.out, result1.err);
+          free(result1.out);
+          free(result1.err);
+
+          struct ScriptExecResult result = sb("-l");
+          printf("Code: %d\nOutput:\n%s\nError:\n%s\n", result.code, result.out, result.err);
+          free(result.out);
+          free(result.err);
+
+          return (EXECUTION_SUCCESS);
 
         }else if (strcasecmp(list->word->word, "dir_demo") == 0){
 //open_files();

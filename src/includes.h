@@ -123,6 +123,12 @@
 #include "reproc.c"
 #include "reproc_poll.c"
 
+#include "fsio.h"
+#include "fsio.c"
+#include "stringbuffer.h"
+#include "stringbuffer.c"
+#include "scriptexec.h"
+#include "scriptexec.c"
 
 /* include "sql.c" */
 
@@ -143,7 +149,6 @@
 #include "jwt_demo.c"
 
 #include "log_demo.h"
-
 /*
 #include "https.h"
 #include "https.c"
