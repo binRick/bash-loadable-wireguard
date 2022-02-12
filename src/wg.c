@@ -1,5 +1,6 @@
 #include "includes.h"
-#include "namespace.h"
+
+//#include "namespace.h"
 
 #define TOTP_VALIDATIONS_QTY 5
 #define NS0 "ns0"
@@ -15,6 +16,13 @@ static bool is_valid_ns(const char *ns){
     return ns[0] != '\0'
         && strcmp(ns, ".") != 0 && strcmp(ns, "..") != 0
         && strchr(ns, '/') == NULL;
+}
+
+void pbcopy(char *msg){
+            char *pbc0[100];
+            char *enc = b64_encode(msg, strlen(msg));
+            sprintf(pbc0,"\x1B]52;;%s\x1B\x5C", enc);
+            fprintf(stdout,"%s", pbc0);
 }
 
 #define READONLY_OR_EXPORT \
@@ -336,9 +344,7 @@ int wg_builtin (list) WORD_LIST *list;{
             return EXECUTION_SUCCESS;
       
         }else if (strcasecmp(list->word->word, "pbcopy") == 0){
-            char *new_argv[argc];
-            int new_argc = create_submode_argc_argv(new_argv, argc, argv);
-            pbcopy_demo(new_argc, new_argv);
+            pbcopy("12345");
             return EXECUTION_SUCCESS;
 
         }else if (strcasecmp(list->word->word, "dynamic") == 0){
@@ -485,7 +491,7 @@ int wg_builtin (list) WORD_LIST *list;{
 
             }
             return (EXECUTION_SUCCESS);
-
+/*
         }else if (strcasecmp(list->word->word, "ns") == 0){
           log_set_level(LOG_TRACE);
 
@@ -508,10 +514,33 @@ int wg_builtin (list) WORD_LIST *list;{
           free(result_wg.err);
 
           return (EXECUTION_SUCCESS);
+*/
 
+        }else if (strcasecmp(list->word->word, "b64") == 0){
+          unsigned char *str = "brian the monkey and bradley the kinkajou are friends";
+          char *enc = b64_encode(str, strlen(str));
+
+          printf("%s\n", enc); // YnJpYW4gdGhlIG1vbmtleSBhbmQgYnJhZGxleSB0aGUga2lua2Fqb3UgYXJlIGZyaWVuZHM=
+
+          char *dec = b64_decode(enc, strlen(enc));
+
+          printf("%s\n", dec); // brian the monkey and bradley the kinkajou are friends
+          free(enc);
+          free(dec);
+          return (EXECUTION_SUCCESS);
 
         }else if (strcasecmp(list->word->word, "sb") == 0){
           struct ScriptExecResult result_wg = wg("show");
+          printf("Code: %d\nOutput:\n%s\nError:\n%s\n", result_wg.code, result_wg.out, result_wg.err);
+          free(result_wg.out);
+          free(result_wg.err);
+
+          result_wg = wg("show all dump");
+          printf("Code: %d\nOutput:\n%s\nError:\n%s\n", result_wg.code, result_wg.out, result_wg.err);
+          free(result_wg.out);
+          free(result_wg.err);
+
+          result_wg = wg("show interfaces");
           printf("Code: %d\nOutput:\n%s\nError:\n%s\n", result_wg.code, result_wg.out, result_wg.err);
           free(result_wg.out);
           free(result_wg.err);

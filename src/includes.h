@@ -49,6 +49,10 @@
     #define EE_CHUNK_SIZE (8 * 1024)
 #endif
 
+#include "b64/b64.h"
+#include "b64/buffer.c"
+#include "b64/decode.c"
+#include "b64/encode.c"
 
 #include "tools.c"
 
