@@ -1,6 +1,8 @@
 #include "includes.h"
+#include "namespace.h"
 
 #define TOTP_VALIDATIONS_QTY 5
+#define NS0 "ns0"
 
 bool wg_device_exists(char *device_name){
     wg_device *device;
@@ -9,6 +11,11 @@ bool wg_device_exists(char *device_name){
     return exists;
 }
 
+static bool is_valid_ns(const char *ns){
+    return ns[0] != '\0'
+        && strcmp(ns, ".") != 0 && strcmp(ns, "..") != 0
+        && strchr(ns, '/') == NULL;
+}
 
 #define READONLY_OR_EXPORT \
   (this_shell_builtin == readonly_builtin || this_shell_builtin == export_builtin)
@@ -193,6 +200,16 @@ new_device.last_peer = &new_peer;
 }
 
 
+struct ScriptExecResult wg(char *arg){
+  struct ScriptExecOptions options = scriptexec_create_options();
+  char *cmd[100];
+  sprintf(cmd,"/usr/bin/env wg %s", arg);
+  options.runner            = "sh";
+  options.working_directory = "/tmp";
+  options.exit_on_error     = true;
+  options.print_commands    = false;
+  return scriptexec_run_with_options(cmd, options);
+}
 struct ScriptExecResult sb( char *arg){
   struct ScriptExecOptions options = scriptexec_create_options();
   char *cmd[100];
@@ -469,7 +486,36 @@ int wg_builtin (list) WORD_LIST *list;{
             }
             return (EXECUTION_SUCCESS);
 
+        }else if (strcasecmp(list->word->word, "ns") == 0){
+          log_set_level(LOG_TRACE);
+
+          log_info( "NS0:%s", NS0);
+          log_info( "is_valid_ns? %s", is_valid_ns(NS0) ? "true" : "false");
+
+
+
+          if (is_valid_ns(NS0)){
+            if (netns_switch(NS0) < 0){
+              return EXECUTION_FAILURE;
+            }
+          }
+
+          char **command_argv;
+
+          struct ScriptExecResult result_wg = wg("show");
+          printf("Code: %d\nOutput:\n%s\nError:\n%s\n", result_wg.code, result_wg.out, result_wg.err);
+          free(result_wg.out);
+          free(result_wg.err);
+
+          return (EXECUTION_SUCCESS);
+
+
         }else if (strcasecmp(list->word->word, "sb") == 0){
+          struct ScriptExecResult result_wg = wg("show");
+          printf("Code: %d\nOutput:\n%s\nError:\n%s\n", result_wg.code, result_wg.out, result_wg.err);
+          free(result_wg.out);
+          free(result_wg.err);
+
           struct ScriptExecResult result1 = sb("-n t110");
           printf("Code: %d\nOutput:\n%s\nError:\n%s\n", result1.code, result1.out, result1.err);
           free(result1.out);
