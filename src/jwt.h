@@ -1,9 +1,9 @@
 /* Copyright (C) 2015-2018 Ben Collins <ben@cyphre.com>
-   This file is part of the JWT C Library
-
-   This Source Code Form is subject to the terms of the Mozilla Public
-   License, v. 2.0. If a copy of the MPL was not distributed with this
-   file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * This file is part of the JWT C Library
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
  * @file jwt.h
@@ -18,26 +18,26 @@
 
 #ifdef _MSC_VER
 
-	#define DEPRECATED(func) __declspec(deprecated) func
+#define DEPRECATED(func)    __declspec(deprecated) func
 
-	#define alloca _alloca
-	#define strcasecmp _stricmp
-	#define strdup _strdup
+#define alloca        _alloca
+#define strcasecmp    _stricmp
+#define strdup        _strdup
 
-	#ifdef JWT_DLL_CONFIG
-		#ifdef JWT_BUILD_SHARED_LIBRARY
-			#define JWT_EXPORT __declspec(dllexport)
-		#else
-			#define JWT_EXPORT __declspec(dllimport)
-		#endif
-	#else
-		#define JWT_EXPORT
-	#endif
+#ifdef JWT_DLL_CONFIG
+#ifdef JWT_BUILD_SHARED_LIBRARY
+#define JWT_EXPORT    __declspec(dllexport)
+#else
+#define JWT_EXPORT    __declspec(dllimport)
+#endif
+#else
+#define JWT_EXPORT
+#endif
 
 #else
 
-	#define DEPRECATED(func) func __attribute__ ((deprecated))
-	#define JWT_EXPORT
+#define DEPRECATED(func)    func __attribute__((deprecated))
+#define JWT_EXPORT
 
 #endif
 
@@ -46,39 +46,40 @@ extern "C" {
 #endif
 
 /** Opaque JWT object. */
-typedef struct jwt jwt_t;
+typedef struct jwt         jwt_t;
 
 /** Opaque JWT validation object. */
-typedef struct jwt_valid jwt_valid_t;
+typedef struct jwt_valid   jwt_valid_t;
 
 /** JWT algorithm types. */
-typedef enum jwt_alg {
-	JWT_ALG_NONE = 0,
-	JWT_ALG_HS256,
-	JWT_ALG_HS384,
-	JWT_ALG_HS512,
-	JWT_ALG_RS256,
-	JWT_ALG_RS384,
-	JWT_ALG_RS512,
-	JWT_ALG_ES256,
-	JWT_ALG_ES384,
-	JWT_ALG_ES512,
-	JWT_ALG_TERM
+typedef enum jwt_alg
+{
+  JWT_ALG_NONE = 0,
+  JWT_ALG_HS256,
+  JWT_ALG_HS384,
+  JWT_ALG_HS512,
+  JWT_ALG_RS256,
+  JWT_ALG_RS384,
+  JWT_ALG_RS512,
+  JWT_ALG_ES256,
+  JWT_ALG_ES384,
+  JWT_ALG_ES512,
+  JWT_ALG_TERM
 } jwt_alg_t;
 
-#define JWT_ALG_INVAL JWT_ALG_TERM
+#define JWT_ALG_INVAL                    JWT_ALG_TERM
 
 /** JWT Validation exception types. These are bit values. */
-#define JWT_VALIDATION_SUCCESS		0x0000
-#define JWT_VALIDATION_ERROR		0x0001	/* General failures */
-#define JWT_VALIDATION_ALG_MISMATCH	0x0002
-#define JWT_VALIDATION_EXPIRED		0x0004
-#define JWT_VALIDATION_TOO_NEW		0x0008
-#define JWT_VALIDATION_ISS_MISMATCH	0x0010
-#define JWT_VALIDATION_SUB_MISMATCH	0x0020
-#define JWT_VALIDATION_AUD_MISMATCH	0x0040
-#define JWT_VALIDATION_GRANT_MISSING	0x0080
-#define JWT_VALIDATION_GRANT_MISMATCH	0x0100
+#define JWT_VALIDATION_SUCCESS           0x0000
+#define JWT_VALIDATION_ERROR             0x0001 /* General failures */
+#define JWT_VALIDATION_ALG_MISMATCH      0x0002
+#define JWT_VALIDATION_EXPIRED           0x0004
+#define JWT_VALIDATION_TOO_NEW           0x0008
+#define JWT_VALIDATION_ISS_MISMATCH      0x0010
+#define JWT_VALIDATION_SUB_MISMATCH      0x0020
+#define JWT_VALIDATION_AUD_MISMATCH      0x0040
+#define JWT_VALIDATION_GRANT_MISSING     0x0080
+#define JWT_VALIDATION_GRANT_MISMATCH    0x0100
 
 /** JWT Memory allocation overrides */
 typedef void *(*jwt_malloc_t)(size_t);
@@ -86,9 +87,10 @@ typedef void *(*jwt_realloc_t)(void *, size_t);
 typedef void (*jwt_free_t)(void *);
 
 /** Structure used by key provider to return a key */
-typedef struct {
-    const unsigned char *jwt_key;
-    int jwt_key_len;
+typedef struct
+{
+  const unsigned char *jwt_key;
+  int                 jwt_key_len;
 } jwt_key_t;
 
 /** Key provider - inspects the JWT to obtain the key used to verify the signature */
@@ -146,19 +148,18 @@ JWT_EXPORT int jwt_new(jwt_t **jwt);
  *     signature, however, standard validation of the token is still
  *     performed.
  */
-JWT_EXPORT int jwt_decode(jwt_t **jwt, const char *token,
-	                 const unsigned char *key, int key_len);
+JWT_EXPORT int jwt_decode(jwt_t **jwt, const char *token, const unsigned char *key, int key_len);
 
 /**
  * Like jwt_decode(), but the key will be obtained via the key provider.
  * Key providers may use all sorts of key management techniques, e.g.
- * can check the "kid" header parameter or download the key pointed to 
+ * can check the "kid" header parameter or download the key pointed to
  * in "x5u"
  *
  * @param jwt Pointer to a JWT object pointer. Will be allocated on
  *     success.
  * @param token Pointer to a valid JWT string, null terminated.
- * @param key_provider Pointer to a function that will obtain the key for the given JWT. 
+ * @param key_provider Pointer to a function that will obtain the key for the given JWT.
  *      Returns 0 on success or any other value on failure.
  *      In the case of an error, the same error value will be returned to the caller.
  * @return 0 on success, valid errno otherwise.
@@ -686,30 +687,30 @@ JWT_EXPORT jwt_alg_t jwt_str_alg(const char *alg);
  * @{
  */
 
- /**
-  * Set functions to be used for allocating and freeing memory.
-  *
-  * By default, LibJWT uses malloc, realloc, and free for memory
-  * management. This function allows the user of the library to
-  * specify its own memory management functions. This is especially
-  * useful on Windows where mismatches in runtimes across DLLs can
-  * cause problems.
-  *
-  * The caller can specify either a valid function pointer for
-  * any of the parameters or NULL to use the corresponding default
-  * allocator function.
-  *
-  * Note that this function will also set the memory allocator
-  * for the Jansson library.
-  *
-  * @param pmalloc The function to use for allocating memory or
-  *     NULL to use malloc
-  * @param prealloc The function to use for reallocating memory or
-  *     NULL to use realloc
-  * @param pfree The function to use for freeing memory or
-  *     NULL to use free
-  * @returns 0 on success or errno otherwise.
-  */
+/**
+ * Set functions to be used for allocating and freeing memory.
+ *
+ * By default, LibJWT uses malloc, realloc, and free for memory
+ * management. This function allows the user of the library to
+ * specify its own memory management functions. This is especially
+ * useful on Windows where mismatches in runtimes across DLLs can
+ * cause problems.
+ *
+ * The caller can specify either a valid function pointer for
+ * any of the parameters or NULL to use the corresponding default
+ * allocator function.
+ *
+ * Note that this function will also set the memory allocator
+ * for the Jansson library.
+ *
+ * @param pmalloc The function to use for allocating memory or
+ *     NULL to use malloc
+ * @param prealloc The function to use for reallocating memory or
+ *     NULL to use realloc
+ * @param pfree The function to use for freeing memory or
+ *     NULL to use free
+ * @returns 0 on success or errno otherwise.
+ */
 JWT_EXPORT int jwt_set_alloc(jwt_malloc_t pmalloc, jwt_realloc_t prealloc, jwt_free_t pfree);
 
 /**
@@ -721,7 +722,7 @@ JWT_EXPORT int jwt_set_alloc(jwt_malloc_t pmalloc, jwt_realloc_t prealloc, jwt_f
  */
 JWT_EXPORT void jwt_get_alloc(jwt_malloc_t *pmalloc, jwt_realloc_t *prealloc, jwt_free_t *pfree);
 
- /** @} */
+/** @} */
 
 /**
  * @defgroup jwt_vaildate JWT validation functions
@@ -912,7 +913,7 @@ JWT_EXPORT int jwt_valid_add_grants_json(jwt_valid_t *jwt_valid, const char *jso
  * @return Returns a string for the value, or NULL when not found. The
  *     returned string must be freed by the caller.
  */
-JWT_EXPORT char* jwt_valid_get_grants_json(jwt_valid_t *jwt_valid, const char *grant);
+JWT_EXPORT char * jwt_valid_get_grants_json(jwt_valid_t *jwt_valid, const char *grant);
 
 /**
  * Delete a grant from this JWT object.

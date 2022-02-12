@@ -15,20 +15,20 @@
 #include <stdint.h>
 
 #ifdef SQLDBAL_MYSQL
-# define SQLDBAL_MARIADB
+#define SQLDBAL_MARIADB
 #endif /* SQLDBAL_MYSQL */
 
 #ifdef SQLDBAL_PQ
-# define SQLDBAL_POSTGRESQL
+#define SQLDBAL_POSTGRESQL
 #endif /* SQLDBAL_PQ */
 
-#if !defined(SQLDBAL_MARIADB   ) && \
-    !defined(SQLDBAL_POSTGRESQL) && \
-    !defined(SQLDBAL_SQLITE)
-# error "must define at least one driver: "
-        "SQLDBAL_MARIADB, "
-        "SQLDBAL_POSTGRESQL, "
-        "SQLDBAL_SQLITE"
+#if !defined (SQLDBAL_MARIADB) &&  \
+  !defined (SQLDBAL_POSTGRESQL) && \
+  !defined (SQLDBAL_SQLITE)
+#error "must define at least one driver: "
+"SQLDBAL_MARIADB, "
+"SQLDBAL_POSTGRESQL, "
+"SQLDBAL_SQLITE"
 #endif /* no drivers defined */
 
 /**
@@ -42,14 +42,14 @@
  *
  * No flag.
  */
-#define SQLDBAL_FLAG_NONE                  (0)
+#define SQLDBAL_FLAG_NONE     (0)
 
 /**
  * @ingroup sqldbal_flag
  *
  * Print debug/tracing information to stderr.
  */
-#define SQLDBAL_FLAG_DEBUG                 (1 << 0)
+#define SQLDBAL_FLAG_DEBUG    (1 << 0)
 
 #ifdef SQLDBAL_SQLITE
 /**
@@ -57,21 +57,21 @@
  *
  * Open the SQLite database in read mode.
  */
-#define SQLDBAL_FLAG_SQLITE_OPEN_READONLY  (1 << 16)
+#define SQLDBAL_FLAG_SQLITE_OPEN_READONLY     (1 << 16)
 
 /**
  * @ingroup sqldbal_flag
  *
  * Open the SQLite database in read/write mode.
  */
-#define SQLDBAL_FLAG_SQLITE_OPEN_READWRITE (1 << 17)
+#define SQLDBAL_FLAG_SQLITE_OPEN_READWRITE    (1 << 17)
 
 /**
  * @ingroup sqldbal_flag
  *
  * Create the SQLite database if it does not exist yet.
  */
-#define SQLDBAL_FLAG_SQLITE_OPEN_CREATE    (1 << 18)
+#define SQLDBAL_FLAG_SQLITE_OPEN_CREATE       (1 << 18)
 #endif /* SQLDBAL_SQLITE */
 
 /**
@@ -80,17 +80,18 @@
  * Special flag for the database context used to determine if the
  * initial memory allocation failed.
  */
-#define SQLDBAL_FLAG_INVALID_MEMORY        (1 << 30)
+#define SQLDBAL_FLAG_INVALID_MEMORY    (1 << 30)
 
 /**
  * SQL drivers available to use in this library.
  */
-enum sqldbal_driver{
+enum sqldbal_driver
+{
 #ifdef SQLDBAL_MARIADB
   /**
    * MariaDB/MySQL driver.
    */
-  SQLDBAL_DRIVER_MARIADB      = 3,
+  SQLDBAL_DRIVER_MARIADB = 3,
 
   /**
    * Same driver as @ref SQLDBAL_DRIVER_MARIADB.
@@ -99,27 +100,27 @@ enum sqldbal_driver{
    * because the application may need to distinguish between the
    * two driver names.
    */
-  SQLDBAL_DRIVER_MYSQL        = 4,
+  SQLDBAL_DRIVER_MYSQL   = 4,
 #endif /* SQLDBAL_MARIADB */
 
 #ifdef SQLDBAL_POSTGRESQL
   /**
    * PostgreSQL driver using the pq library.
    */
-  SQLDBAL_DRIVER_POSTGRESQL   = 7,
+  SQLDBAL_DRIVER_POSTGRESQL = 7,
 #endif /* SQLDBAL_POSTGRESQL */
 
 #ifdef SQLDBAL_SQLITE
   /**
    * SQLite driver using SQLite3 library.
    */
-  SQLDBAL_DRIVER_SQLITE       = 12,
+  SQLDBAL_DRIVER_SQLITE  = 12,
 #endif /* SQLDBAL_SQLITE */
 
   /**
    * Unknown driver or invalid database driver context.
    */
-  SQLDBAL_DRIVER_INVALID      = 100
+  SQLDBAL_DRIVER_INVALID = 100
 };
 
 /**
@@ -128,7 +129,8 @@ enum sqldbal_driver{
  *
  * Use @ref sqldbal_errstr to get more detailed error information.
  */
-enum sqldbal_status_code{
+enum sqldbal_status_code
+{
   /**
    * Successful operation completed.
    */
@@ -209,7 +211,8 @@ enum sqldbal_status_code{
  * The application can use this result code to determine if more rows exist
  * in the result set.
  */
-enum sqldbal_fetch_result{
+enum sqldbal_fetch_result
+{
   /**
    * The next row has been returned in the result set.
    *
@@ -238,7 +241,8 @@ enum sqldbal_fetch_result{
  * Some drivers may consider text and integers as blobs. However, applications
  * can still use this to check if the result has a NULL value.
  */
-enum sqldbal_column_type{
+enum sqldbal_column_type
+{
   /**
    * Integer.
    */
@@ -274,7 +278,8 @@ enum sqldbal_column_type{
  * Driver-specific options to pass to the driver when creating the database
  * connection.
  */
-struct sqldbal_driver_option{
+struct sqldbal_driver_option
+{
   /**
    * Unique identifier naming the option.
    */
@@ -290,10 +295,7 @@ struct sqldbal_driver_option{
  * Callback function type used to process returned SQL results.
  */
 typedef int
-(*sqldbal_exec_callback_fp)(void *user_data,
-                            size_t num_cols,
-                            char **col_result_list,
-                            size_t *col_length_list);
+(*sqldbal_exec_callback_fp)(void *user_data, size_t num_cols, char **col_result_list, size_t *col_length_list);
 
 struct sqldbal_db;
 
@@ -335,8 +337,7 @@ sqldbal_driver_type(const struct sqldbal_db *const db);
  * @return            See @ref sqldbal_status_code.
  */
 enum sqldbal_status_code
-sqldbal_errstr(const struct sqldbal_db *const db,
-               const char **errstr);
+sqldbal_errstr(const struct sqldbal_db *const db, const char **errstr);
 
 /**
  * Open a new connection to the database.
@@ -400,16 +401,7 @@ sqldbal_errstr(const struct sqldbal_db *const db,
  * @return                 See @ref sqldbal_status_code.
  */
 enum sqldbal_status_code
-sqldbal_open(enum sqldbal_driver driver,
-             const char *const location,
-             const char *const port,
-             const char *const username,
-             const char *const password,
-             const char *const database,
-             const unsigned long flags,
-             const struct sqldbal_driver_option *const option_list,
-             size_t num_options,
-             struct sqldbal_db **db);
+sqldbal_open(enum sqldbal_driver driver, const char *const location, const char *const port, const char *const username, const char *const password, const char *const database, const unsigned long flags, const struct sqldbal_driver_option *const option_list, size_t num_options, struct sqldbal_db **db);
 
 /**
  * Close the database handle previously opened by @ref sqldbal_open.
@@ -498,10 +490,7 @@ sqldbal_rollback(struct sqldbal_db *const db);
  * @return              See @ref sqldbal_status_code.
  */
 enum sqldbal_status_code
-sqldbal_exec(struct sqldbal_db *const db,
-             const char *const sql,
-             sqldbal_exec_callback_fp callback,
-             void *user_data);
+sqldbal_exec(struct sqldbal_db *const db, const char *const sql, sqldbal_exec_callback_fp callback, void *user_data);
 
 /**
  * Get the insert id from the last SQL insert statement.
@@ -519,9 +508,7 @@ sqldbal_exec(struct sqldbal_db *const db,
  * @return               See @ref sqldbal_status_code.
  */
 enum sqldbal_status_code
-sqldbal_last_insert_id(struct sqldbal_db *const db,
-                       const char *const name,
-                       uint64_t *insert_id);
+sqldbal_last_insert_id(struct sqldbal_db *const db, const char *const name, uint64_t *insert_id);
 
 /**
  * Compile a SQL query and return a statement handle.
@@ -534,10 +521,7 @@ sqldbal_last_insert_id(struct sqldbal_db *const db,
  * @return             See @ref sqldbal_status_code.
  */
 enum sqldbal_status_code
-sqldbal_stmt_prepare(struct sqldbal_db *const db,
-                     const char *const sql,
-                     size_t sql_len,
-                     struct sqldbal_stmt **stmt);
+sqldbal_stmt_prepare(struct sqldbal_db *const db, const char *const sql, size_t sql_len, struct sqldbal_stmt **stmt);
 
 /**
  * Assign binary data to a prepared statement placeholder.
@@ -549,10 +533,7 @@ sqldbal_stmt_prepare(struct sqldbal_db *const db,
  * @return            See @ref sqldbal_status_code.
  */
 enum sqldbal_status_code
-sqldbal_stmt_bind_blob(struct sqldbal_stmt *const stmt,
-                       size_t col_idx,
-                       const void *const blob,
-                       size_t blobsz);
+sqldbal_stmt_bind_blob(struct sqldbal_stmt *const stmt, size_t col_idx, const void *const blob, size_t blobsz);
 
 /**
  * Assign a 64-bit integer to a prepared statement placeholder.
@@ -563,9 +544,7 @@ sqldbal_stmt_bind_blob(struct sqldbal_stmt *const stmt,
  * @return            See @ref sqldbal_status_code.
  */
 enum sqldbal_status_code
-sqldbal_stmt_bind_int64(struct sqldbal_stmt *const stmt,
-                        size_t col_idx,
-                        int64_t i64);
+sqldbal_stmt_bind_int64(struct sqldbal_stmt *const stmt, size_t col_idx, int64_t i64);
 
 /**
  * Assign a string to a prepared statement placeholder.
@@ -578,10 +557,7 @@ sqldbal_stmt_bind_int64(struct sqldbal_stmt *const stmt,
  * @return            See @ref sqldbal_status_code.
  */
 enum sqldbal_status_code
-sqldbal_stmt_bind_text(struct sqldbal_stmt *const stmt,
-                       size_t col_idx,
-                       const char *const s,
-                       size_t slen);
+sqldbal_stmt_bind_text(struct sqldbal_stmt *const stmt, size_t col_idx, const char *const s, size_t slen);
 
 /**
  * Assign a NULL value to a prepared statement placeholder.
@@ -591,8 +567,7 @@ sqldbal_stmt_bind_text(struct sqldbal_stmt *const stmt,
  * @return            See @ref sqldbal_status_code.
  */
 enum sqldbal_status_code
-sqldbal_stmt_bind_null(struct sqldbal_stmt *const stmt,
-                       size_t col_idx);
+sqldbal_stmt_bind_null(struct sqldbal_stmt *const stmt, size_t col_idx);
 
 /**
  * Execute a compiled statement with bound parameters.
@@ -631,10 +606,7 @@ sqldbal_stmt_fetch(struct sqldbal_stmt *const stmt);
  * @return             See @ref sqldbal_status_code.
  */
 enum sqldbal_status_code
-sqldbal_stmt_column_blob(struct sqldbal_stmt *const stmt,
-                         size_t col_idx,
-                         const void **blob,
-                         size_t *blobsz);
+sqldbal_stmt_column_blob(struct sqldbal_stmt *const stmt, size_t col_idx, const void **blob, size_t *blobsz);
 
 /**
  * Retrieve the result column as an integer.
@@ -645,9 +617,7 @@ sqldbal_stmt_column_blob(struct sqldbal_stmt *const stmt,
  * @return             See @ref sqldbal_status_code.
  */
 enum sqldbal_status_code
-sqldbal_stmt_column_int64(struct sqldbal_stmt *const stmt,
-                          size_t col_idx,
-                          int64_t *i64);
+sqldbal_stmt_column_int64(struct sqldbal_stmt *const stmt, size_t col_idx, int64_t *i64);
 
 /**
  * Retrieve the result column as a string.
@@ -660,10 +630,7 @@ sqldbal_stmt_column_int64(struct sqldbal_stmt *const stmt,
  * @return             See @ref sqldbal_status_code.
  */
 enum sqldbal_status_code
-sqldbal_stmt_column_text(struct sqldbal_stmt *const stmt,
-                         size_t col_idx,
-                         const char **text,
-                         size_t *textsz);
+sqldbal_stmt_column_text(struct sqldbal_stmt *const stmt, size_t col_idx, const char **text, size_t *textsz);
 
 /**
  * Get the column data type.
@@ -676,8 +643,7 @@ sqldbal_stmt_column_text(struct sqldbal_stmt *const stmt,
  * @return            See @ref sqldbal_column_type.
  */
 enum sqldbal_column_type
-sqldbal_stmt_column_type(struct sqldbal_stmt *const stmt,
-                         size_t col_idx);
+sqldbal_stmt_column_type(struct sqldbal_stmt *const stmt, size_t col_idx);
 
 /**
  * Free statement resources.

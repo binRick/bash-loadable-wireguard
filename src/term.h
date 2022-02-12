@@ -10,27 +10,27 @@
 
 // output
 
-#define term_write(c) printf("\e[" c);
+#define term_write(c)    printf("\e[" c);
 
 // aliases
 
-#define term_bold term_bright
-#define term_clear term_erase
+#define term_bold     term_bright
+#define term_clear    term_erase
 
 // display
 
-#define term_reset() term_write("0m")
-#define term_bright() term_write("1m")
-#define term_dim() term_write("2m")
-#define term_underline() term_write("4m")
-#define term_blink() term_write("5m")
-#define term_reverse() term_write("7m")
-#define term_hidden() term_write("8m")
+#define term_reset()        term_write("0m")
+#define term_bright()       term_write("1m")
+#define term_dim()          term_write("2m")
+#define term_underline()    term_write("4m")
+#define term_blink()        term_write("5m")
+#define term_reverse()      term_write("7m")
+#define term_hidden()       term_write("8m")
 
 // cursor
 
-#define term_hide_cursor() term_write("?25l")
-#define term_show_cursor() term_write("?25h")
+#define term_hide_cursor()    term_write("?25l")
+#define term_show_cursor()    term_write("?25h")
 
 // size
 

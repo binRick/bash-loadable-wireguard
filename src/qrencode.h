@@ -99,44 +99,46 @@
 #ifndef QRENCODE_H
 #define QRENCODE_H
 
-#if defined(__cplusplus)
+#if defined (__cplusplus)
 extern "C" {
 #endif
 
 /**
  * Encoding mode.
  */
-typedef enum {
-	QR_MODE_NUL = -1,   ///< Terminator (NUL character). Internal use only
-	QR_MODE_NUM = 0,    ///< Numeric mode
-	QR_MODE_AN,         ///< Alphabet-numeric mode
-	QR_MODE_8,          ///< 8-bit data mode
-	QR_MODE_KANJI,      ///< Kanji (shift-jis) mode
-	QR_MODE_STRUCTURE,  ///< Internal use only
-	QR_MODE_ECI,        ///< ECI mode
-	QR_MODE_FNC1FIRST,  ///< FNC1, first position
-	QR_MODE_FNC1SECOND, ///< FNC1, second position
+typedef enum
+{
+  QR_MODE_NUL = -1,         ///< Terminator (NUL character). Internal use only
+  QR_MODE_NUM = 0,          ///< Numeric mode
+  QR_MODE_AN,               ///< Alphabet-numeric mode
+  QR_MODE_8,                ///< 8-bit data mode
+  QR_MODE_KANJI,            ///< Kanji (shift-jis) mode
+  QR_MODE_STRUCTURE,        ///< Internal use only
+  QR_MODE_ECI,              ///< ECI mode
+  QR_MODE_FNC1FIRST,        ///< FNC1, first position
+  QR_MODE_FNC1SECOND,       ///< FNC1, second position
 } QRencodeMode;
 
 /**
  * Level of error correction.
  */
-typedef enum {
-	QR_ECLEVEL_L = 0, ///< lowest
-	QR_ECLEVEL_M,
-	QR_ECLEVEL_Q,
-	QR_ECLEVEL_H      ///< highest
+typedef enum
+{
+  QR_ECLEVEL_L = 0,       ///< lowest
+  QR_ECLEVEL_M,
+  QR_ECLEVEL_Q,
+  QR_ECLEVEL_H            ///< highest
 } QRecLevel;
 
 /**
  * Maximum version (size) of QR-code symbol.
  */
-#define QRSPEC_VERSION_MAX 40
+#define QRSPEC_VERSION_MAX     40
 
 /**
  * Maximum version (size) of QR-code symbol.
  */
-#define MQRSPEC_VERSION_MAX 4
+#define MQRSPEC_VERSION_MAX    4
 
 
 /******************************************************************************
@@ -361,30 +363,32 @@ extern int QRinput_setFNC1Second(QRinput *input, unsigned char appid);
  * meaningless for usual applications, but here its specification is described.
  *
  * @verbatim
-   MSB 76543210 LSB
-       |||||||`- 1=black/0=white
-       ||||||`-- 1=ecc/0=data code area
-       |||||`--- format information
-       ||||`---- version information
-       |||`----- timing pattern
-       ||`------ alignment pattern
-       |`------- finder pattern and separator
-       `-------- non-data modules (format, timing, etc.)
-   @endverbatim
+ * MSB 76543210 LSB
+ |||||||`- 1=black/0=white
+ ||||||`-- 1=ecc/0=data code area
+ |||||`--- format information
+ ||||`---- version information
+ |||`----- timing pattern
+ ||`------ alignment pattern
+ |`------- finder pattern and separator
+ *     `-------- non-data modules (format, timing, etc.)
+ * @endverbatim
  */
-typedef struct {
-	int version;         ///< version of the symbol
-	int width;           ///< width of the symbol
-	unsigned char *data; ///< symbol data
+typedef struct
+{
+  int           version;     ///< version of the symbol
+  int           width;       ///< width of the symbol
+  unsigned char *data;       ///< symbol data
 } QRcode;
 
 /**
  * Singly-linked list of QRcode. Used to represent a structured symbols.
  * A list is terminated with NULL.
  */
-typedef struct _QRcode_List {
-	QRcode *code;
-	struct _QRcode_List *next;
+typedef struct _QRcode_List
+{
+  QRcode              *code;
+  struct _QRcode_List *next;
 } QRcode_List;
 
 /**
@@ -556,12 +560,14 @@ extern char *QRcode_APIVersionString(void);
  * @deprecated
  */
 #ifndef _MSC_VER
-extern void QRcode_clearCache(void) __attribute__ ((deprecated));
+extern void QRcode_clearCache(void) __attribute__((deprecated));
+
 #else
 extern void QRcode_clearCache(void);
+
 #endif
 
-#if defined(__cplusplus)
+#if defined (__cplusplus)
 }
 #endif
 
