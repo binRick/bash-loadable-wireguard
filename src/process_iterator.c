@@ -4,8 +4,8 @@
 #ifndef __APPLE__
 #include <sys/procfs.h>
 #endif
-#include <time.h>
 #include "process_iterator.h"
+#include <time.h>
 
 #ifdef __linux__
 

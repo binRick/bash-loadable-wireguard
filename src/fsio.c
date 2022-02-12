@@ -20,14 +20,14 @@ static bool _fsio_chmod_recursive_callback(struct FsIORecursiveCallbackInfo);
 static bool _fsio_recursive_operation(char *, bool (*callback)(struct FsIORecursiveCallbackInfo), void *, struct StringBuffer *);
 
 
-long fsio_file_size(char *file)
-{
+long fsio_file_size(char *file){
   if (!fsio_file_exists(file))
   {
     return(-1);
   }
 
   FILE *fp = fopen(file, "rb");
+
   if (fp == NULL)
   {
     return(-1);
@@ -47,20 +47,17 @@ long fsio_file_size(char *file)
 }
 
 
-bool fsio_write_text_file(char *file, char *text)
-{
+bool fsio_write_text_file(char *file, char *text){
   return(_fsio_write_file(file, text, "w", true, 0));
 }
 
 
-bool fsio_append_text_file(char *file, char *text)
-{
+bool fsio_append_text_file(char *file, char *text){
   return(_fsio_write_file(file, text, "a", true, 0));
 }
 
 
-char *fsio_read_text_file(char *file)
-{
+char *fsio_read_text_file(char *file){
   struct FsIOReadFileOptions options;
 
   options.max_read_limit = 0;
@@ -70,26 +67,22 @@ char *fsio_read_text_file(char *file)
 }
 
 
-char *fsio_read_text_file_with_options(char *file, struct FsIOReadFileOptions options)
-{
+char *fsio_read_text_file_with_options(char *file, struct FsIOReadFileOptions options){
   return(_fsio_read_file_with_options(file, "r", options));
 }
 
 
-bool fsio_write_binary_file(char *file, char *content, size_t length)
-{
+bool fsio_write_binary_file(char *file, char *content, size_t length){
   return(_fsio_write_file(file, content, "wb", false, length));
 }
 
 
-bool fsio_append_binary_file(char *file, char *content, size_t length)
-{
+bool fsio_append_binary_file(char *file, char *content, size_t length){
   return(_fsio_write_file(file, content, "ab", false, length));
 }
 
 
-char *fsio_read_binary_file(char *file)
-{
+char *fsio_read_binary_file(char *file){
   struct FsIOReadFileOptions options;
 
   options.max_read_limit = 0;
@@ -99,20 +92,17 @@ char *fsio_read_binary_file(char *file)
 }
 
 
-char *fsio_read_binary_file_with_options(char *file, struct FsIOReadFileOptions options)
-{
+char *fsio_read_binary_file_with_options(char *file, struct FsIOReadFileOptions options){
   return(_fsio_read_file_with_options(file, "rb", options));
 }
 
 
-bool fsio_create_empty_file(char *file)
-{
+bool fsio_create_empty_file(char *file){
   return(fsio_write_binary_file(file, "", 0));
 }
 
 
-bool fsio_copy_file(char *source, char *target)
-{
+bool fsio_copy_file(char *source, char *target){
   struct FsIOCopyFileOptions options;
 
   options.write_retries          = 0;
@@ -122,26 +112,28 @@ bool fsio_copy_file(char *source, char *target)
 }
 
 
-bool fsio_copy_file_with_options(char *source, char *target, struct FsIOCopyFileOptions options)
-{
+bool fsio_copy_file_with_options(char *source, char *target, struct FsIOCopyFileOptions options){
   if (source == NULL || target == NULL)
   {
     return(false);
   }
 
   long file_size = fsio_file_size(source);
+
   if (!file_size)
   {
     return(fsio_create_empty_file(target));
   }
 
   FILE *source_fp = fopen(source, "r");
+
   if (source_fp == NULL)
   {
     return(false);
   }
 
   FILE *target_fp = fopen(target, "w");
+
   if (target_fp == NULL)
   {
     fclose(source_fp);
@@ -151,6 +143,7 @@ bool fsio_copy_file_with_options(char *source, char *target, struct FsIOCopyFile
   bool delete_file                      = false;
   long left_to_read                     = file_size;
   char io_buffer[FSIO_READ_BUFFER_SIZE] = { 0 };
+
   do
   {
     if (feof(source_fp))
@@ -208,8 +201,7 @@ bool fsio_copy_file_with_options(char *source, char *target, struct FsIOCopyFile
 }   /* fsio_copy_file_with_options */
 
 
-bool fsio_move_file(char *source, char *target)
-{
+bool fsio_move_file(char *source, char *target){
   struct FsIOMoveFileOptions options;
 
   options.force_copy             = false;
@@ -222,8 +214,7 @@ bool fsio_move_file(char *source, char *target)
 }
 
 
-enum FsIOError fsio_move_file_with_options(char *source, char *target, struct FsIOMoveFileOptions options)
-{
+enum FsIOError fsio_move_file_with_options(char *source, char *target, struct FsIOMoveFileOptions options){
   if (source == NULL || target == NULL)
   {
     return(FSIO_ERROR_INVALID_INPUT);
@@ -247,9 +238,11 @@ enum FsIOError fsio_move_file_with_options(char *source, char *target, struct Fs
   }
 
   struct FsIOCopyFileOptions copy_options;
+
   copy_options.write_retries          = options.write_retries;
   copy_options.retry_interval_seconds = options.retry_interval_seconds;
   bool copy_done = fsio_copy_file_with_options(source, target, copy_options);
+
   if (copy_done)
   {
     fsio_remove(source);
@@ -264,14 +257,14 @@ enum FsIOError fsio_move_file_with_options(char *source, char *target, struct Fs
 } /* fsio_move_file_with_options */
 
 
-char *fsio_file_extension(char *path)
-{
+char *fsio_file_extension(char *path){
   if (path == NULL)
   {
     return(NULL);
   }
 
   size_t length = strlen(path);
+
   if (!length)
   {
     return(NULL);
@@ -279,6 +272,7 @@ char *fsio_file_extension(char *path)
 
   size_t extension_index = 0;
   bool   found           = false;
+
   for (size_t index = length - 1; ; index--)
   {
     char character = path[index];
@@ -306,12 +300,14 @@ char *fsio_file_extension(char *path)
   }
 
   size_t extension_length = length - extension_index;
+
   if (extension_length <= 1)
   {
     return(NULL);
   }
 
   char *extension = malloc(sizeof(char) * (extension_length + 1));
+
   for (size_t index = 0; index < extension_length; index++)
   {
     extension[index] = path[extension_index + index];
@@ -322,8 +318,7 @@ char *fsio_file_extension(char *path)
 } /* fsio_get_file_extension */
 
 
-char *fsio_join_paths(char *path1, char *path2)
-{
+char *fsio_join_paths(char *path1, char *path2){
   if (path1 == NULL)
   {
     if (path2 == NULL)
@@ -339,11 +334,13 @@ char *fsio_join_paths(char *path1, char *path2)
   }
 
   size_t len1 = strlen(path1);
+
   if (!len1)
   {
     return(strdup(path2));
   }
   size_t len2 = strlen(path2);
+
   if (!len2)
   {
     return(strdup(path1));
@@ -355,6 +352,7 @@ char *fsio_join_paths(char *path1, char *path2)
   bool   need_to_remove_separator    = path1_ends_with_separator && path2_starts_with_separator;
 
   size_t concat_len = len1 + len2;
+
   if (need_to_add_separator)
   {
     concat_len = concat_len + 1;
@@ -371,6 +369,7 @@ char *fsio_join_paths(char *path1, char *path2)
     concat_path[index] = path1[index];
   }
   size_t offset = len1;
+
   if (need_to_add_separator)
   {
     concat_path[len1] = '/';
@@ -391,16 +390,14 @@ char *fsio_join_paths(char *path1, char *path2)
 } /* fsio_join_paths */
 
 
-bool fsio_path_exists(char *path)
-{
+bool fsio_path_exists(char *path){
   struct stat info;
 
   return(_fsio_load_stat(path, &info));
 }
 
 
-bool fsio_file_exists(char *path)
-{
+bool fsio_file_exists(char *path){
   struct stat info;
 
   if (!_fsio_load_stat(path, &info))
@@ -412,8 +409,7 @@ bool fsio_file_exists(char *path)
 }
 
 
-bool fsio_dir_exists(char *path)
-{
+bool fsio_dir_exists(char *path){
   struct stat info;
 
   if (!_fsio_load_stat(path, &info))
@@ -425,8 +421,7 @@ bool fsio_dir_exists(char *path)
 }
 
 
-bool fsio_mkdir(char *directory, mode_t mode)
-{
+bool fsio_mkdir(char *directory, mode_t mode){
   if (directory == NULL)
   {
     return(false);
@@ -448,8 +443,7 @@ bool fsio_mkdir(char *directory, mode_t mode)
 }
 
 
-bool fsio_mkdirs(char *directory, mode_t mode)
-{
+bool fsio_mkdirs(char *directory, mode_t mode){
   if (directory == NULL)
   {
     return(false);
@@ -487,8 +481,7 @@ bool fsio_mkdirs(char *directory, mode_t mode)
 }
 
 
-bool fsio_mkdirs_parent(char *path, mode_t mode)
-{
+bool fsio_mkdirs_parent(char *path, mode_t mode){
   if (path == NULL)
   {
     return(false);
@@ -504,14 +497,14 @@ bool fsio_mkdirs_parent(char *path, mode_t mode)
   }
 
   bool done = fsio_mkdirs(directory, mode);
+
   free(path_clone);
 
   return(done);
 }
 
 
-bool fsio_remove(char *path)
-{
+bool fsio_remove(char *path){
   if (path == NULL)
   {
     return(true);
@@ -521,8 +514,7 @@ bool fsio_remove(char *path)
 }
 
 
-bool fsio_chmod_recursive(char *path, mode_t mode)
-{
+bool fsio_chmod_recursive(char *path, mode_t mode){
   mode_t mode_ptr[1];
 
   mode_ptr[0] = mode;
@@ -531,8 +523,7 @@ bool fsio_chmod_recursive(char *path, mode_t mode)
 }
 
 
-bool fsio_recursive_operation(char *path, bool (*callback)(struct FsIORecursiveCallbackInfo), void *context)
-{
+bool fsio_recursive_operation(char *path, bool (*callback)(struct FsIORecursiveCallbackInfo), void *context){
   if (path == NULL)
   {
     return(false);
@@ -540,14 +531,14 @@ bool fsio_recursive_operation(char *path, bool (*callback)(struct FsIORecursiveC
 
   struct StringBuffer *buffer = stringbuffer_new();
   bool                done    = _fsio_recursive_operation(path, callback, context, buffer);
+
   stringbuffer_release(buffer);
 
   return(done);
 }
 
 
-static bool _fsio_load_stat(char *path, struct stat *info)
-{
+static bool _fsio_load_stat(char *path, struct stat *info){
   if (path == NULL)
   {
     return(false);
@@ -562,8 +553,7 @@ static bool _fsio_load_stat(char *path, struct stat *info)
 }
 
 
-static bool _fsio_write_file(char *file, char *content, char *mode, bool is_text, size_t length)
-{
+static bool _fsio_write_file(char *file, char *content, char *mode, bool is_text, size_t length){
   if (file == NULL || content == NULL)
   {
     return(false);
@@ -575,18 +565,21 @@ static bool _fsio_write_file(char *file, char *content, char *mode, bool is_text
   }
 
   bool directory_created = fsio_mkdirs_parent(file, FSIO_MODE_ALL);
+
   if (!directory_created)
   {
     return(false);
   }
 
   FILE *fp = fopen(file, mode);
+
   if (fp == NULL)
   {
     return(false);
   }
 
   size_t written = fwrite(content, 1, length, fp);
+
   if (written < length)
   {
     fclose(fp);
@@ -601,11 +594,10 @@ static bool _fsio_write_file(char *file, char *content, char *mode, bool is_text
   fclose(fp);
 
   return(true);
-}
+} /* _fsio_write_file */
 
 
-static char *_fsio_read_file_with_options(char *file, char *mode, struct FsIOReadFileOptions options)
-{
+static char *_fsio_read_file_with_options(char *file, char *mode, struct FsIOReadFileOptions options){
   long file_size = fsio_file_size(file);
 
   if (file_size < 0)
@@ -618,12 +610,14 @@ static char *_fsio_read_file_with_options(char *file, char *mode, struct FsIORea
   }
 
   FILE *fp = fopen(file, mode);
+
   if (fp == NULL)
   {
     return(NULL);
   }
 
   long left_to_read = file_size;
+
   if (options.max_read_limit > 0 && left_to_read > options.max_read_limit)
   {
     left_to_read = options.max_read_limit;
@@ -636,6 +630,7 @@ static char *_fsio_read_file_with_options(char *file, char *mode, struct FsIORea
 
   struct StringBuffer *buffer                          = stringbuffer_new();
   char                io_buffer[FSIO_READ_BUFFER_SIZE] = { 0 };
+
   do
   {
     if (feof(fp))
@@ -672,22 +667,19 @@ static char *_fsio_read_file_with_options(char *file, char *mode, struct FsIORea
 } /* _fsio_read_file_with_options */
 
 
-static bool _fsio_remove_callback(struct FsIORecursiveCallbackInfo info)
-{
+static bool _fsio_remove_callback(struct FsIORecursiveCallbackInfo info){
   return(remove(info.path) == 0);
 }
 
 
-static bool _fsio_chmod_recursive_callback(struct FsIORecursiveCallbackInfo info)
-{
+static bool _fsio_chmod_recursive_callback(struct FsIORecursiveCallbackInfo info){
   mode_t *mode = (mode_t *)info.context;
 
   return(chmod(info.path, mode[0]) == 0);
 }
 
 
-static bool _fsio_recursive_operation(char *path, bool (*callback)(struct FsIORecursiveCallbackInfo), void *context, struct StringBuffer *buffer)
-{
+static bool _fsio_recursive_operation(char *path, bool (*callback)(struct FsIORecursiveCallbackInfo), void *context, struct StringBuffer *buffer){
   struct FsIORecursiveCallbackInfo info;
 
   info.context = context;

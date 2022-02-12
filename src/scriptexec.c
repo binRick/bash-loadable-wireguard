@@ -11,8 +11,7 @@
 static struct ScriptExecResult _scriptexec_create_result();
 static char *_scriptexec_read_and_delete_text_file(char *);
 
-struct ScriptExecOptions scriptexec_create_options()
-{
+struct ScriptExecOptions scriptexec_create_options(){
   struct ScriptExecOptions options =
   {
     .runner = NULL, .working_directory = NULL, .exit_on_error = true, .print_commands = false
@@ -22,16 +21,14 @@ struct ScriptExecOptions scriptexec_create_options()
 }
 
 
-struct ScriptExecResult scriptexec_run(const char *script)
-{
+struct ScriptExecResult scriptexec_run(const char *script){
   struct ScriptExecOptions options = scriptexec_create_options();
 
   return(scriptexec_run_with_options(script, options));
 }
 
 
-struct ScriptExecResult scriptexec_run_with_options(const char *script, struct ScriptExecOptions options)
-{
+struct ScriptExecResult scriptexec_run_with_options(const char *script, struct ScriptExecOptions options){
   struct ScriptExecResult result = _scriptexec_create_result();
 
   if (script == NULL)
@@ -44,6 +41,7 @@ struct ScriptExecResult scriptexec_run_with_options(const char *script, struct S
 
   // move to cwd
   char *cwd = getcwd(NULL, 0);
+
   stringbuffer_append_string(buffer, "cd ");
   stringbuffer_append_string(buffer, cwd);
   free(cwd);
@@ -89,6 +87,7 @@ struct ScriptExecResult scriptexec_run_with_options(const char *script, struct S
 
   // write script file
   bool written = fsio_write_text_file(script_file, updated_script);
+
   free(updated_script);
   if (!written)
   {
@@ -111,6 +110,7 @@ struct ScriptExecResult scriptexec_run_with_options(const char *script, struct S
 
   // create command
   char *runner = options.runner;
+
   if (runner == NULL)
   {
     runner = "sh";
@@ -124,6 +124,7 @@ struct ScriptExecResult scriptexec_run_with_options(const char *script, struct S
   stringbuffer_append_string(buffer, " 1> ");
   stringbuffer_append_string(buffer, out_file);
   char *command = stringbuffer_to_string(buffer);
+
   stringbuffer_release(buffer);
 
   result.code = system(command);
@@ -143,16 +144,14 @@ struct ScriptExecResult scriptexec_run_with_options(const char *script, struct S
   return(result);
 } /* scriptexec_run_with_options */
 
-static struct ScriptExecResult _scriptexec_create_result()
-{
+static struct ScriptExecResult _scriptexec_create_result(){
   struct ScriptExecResult result = { .code = 0, .out = NULL, .err = NULL };
 
   return(result);
 }
 
 
-static char *_scriptexec_read_and_delete_text_file(char *file)
-{
+static char *_scriptexec_read_and_delete_text_file(char *file){
   char *text = fsio_read_text_file(file);
 
   remove(file);

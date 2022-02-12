@@ -1,35 +1,39 @@
 int i;
 
+
 int waiting(){
   //printf("\n\nHit ENTER to continue...");
   //nc_wait();
   //clrscr();
-  return 0;
+  return(0);
 }
 
 
 int fancyline(void){
   int j;
-  
+
   j = 0;
-  for(i=0;i<51;i++){
+  for (i = 0; i < 51; i++)
+  {
     setfontcolor(j);
     j++;
-    if (j == 8) j = 0;
+    if (j == 8)
+    {
+      j = 0;
+    }
     printf(".");
   }
   setfontcolor(ncBLACK);
-  return 0;
+  return(0);
 }
 
 
 int nocurses_demo(void) {
-
   clrscr();
   setfontbold(TRUE);
 
   fancyline();
-  
+
   printf("\n\
                                              _\n\
  _ __   ___   ___ _   _ _ __ ___  ___  ___  | |__\n\
@@ -41,7 +45,7 @@ int nocurses_demo(void) {
   setfontbold(FALSE);
 
   setfontcolor(ncWHITE);
-  
+
   printf("\n\n\nHello! Welcome to nocurses.h demo!\nLet me present you its features... \n");
   waiting();
 
@@ -67,7 +71,7 @@ resetcolors()\n");
   waiting();
 
   printf("See it? The screen was cleared with the clrscr() funciton.");
-  waiting(); 
+  waiting();
 
   gotoxy(5, 6);
   printf("Now I am here!");
@@ -75,16 +79,18 @@ resetcolors()\n");
   printf("And now I am there!");
 
   printf("\n\nJust use gotoxy(position x, position y) to move around!");
-  waiting(); 
+  waiting();
 
-  for(i=0;i<8;i++){
+  for (i = 0; i < 8; i++)
+  {
     setfontcolor(i);
     printf("I can change font colors!\n");
   }
   printf("\nUse setfontcolor(COLOR_NAME) function!");
   waiting();
 
-  for(i=0;i<8;i++){
+  for (i = 0; i < 8; i++)
+  {
     setbgrcolor(i);
     printf("I can also change background colors!\n");
   }
@@ -102,9 +108,11 @@ resetcolors()\n");
   waiting();
 
   struct termsize size = gettermsize();
+
   printf("I can detect your terminal size.\n\nThis terminal is %d columns and %d rows, so one line should look like this:\n\n", size.cols, size.rows);
-  for (int i=0;i<size.cols;i++) {
-	  printf("=");
+  for (int i = 0; i < size.cols; i++)
+  {
+    printf("=");
   }
   waiting();
 
@@ -167,9 +175,8 @@ resetcolors()\n");
 
   waiting();
   clrscr();
-  
-  
-  return 0;
-}
 
+
+  return(0);
+} /* nocurses_demo */
 
