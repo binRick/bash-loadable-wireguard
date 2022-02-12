@@ -284,8 +284,9 @@ test_tcolor(){
 }
 
 dev_main(){
+  test_log
   #test_wg
-  test_totp
+  #test_totp
 	#NAME=pexec test_pexec
 	#NAME=tcolor test_tcolor
 

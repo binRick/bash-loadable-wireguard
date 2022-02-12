@@ -8,7 +8,7 @@ int https_demo(int argc, char **argv) {
 
   HTTP_INFO hi1, hi2;
 
-  log_debug("https.................");
+  log_info("https.................");
   return 0;
 }
 

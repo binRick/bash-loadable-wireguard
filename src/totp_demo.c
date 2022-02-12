@@ -4,6 +4,7 @@
 #include <time.h>
 
 #define TOTP_SECRET_BYTES 33
+#define TOTP_LENGTH 6
 
 
 int32_t FillFromURANDOM(uint8_t* out, size_t outlen){
@@ -35,7 +36,7 @@ void demo_totp_calculation(){
     scanf("%s", buf);
     size_t secretlen = base32decode(buf, strnlen(buf, 512), secret, TOTP_SECRET_BYTES);
     time_t now = time(0);
-    int otp = compute_totp(secret, secretlen, now, 30, 6);
+    int otp = compute_totp(secret, secretlen, now, 30, TOTP_LENGTH);
     printf("Current OTP code: %06d\n", otp);
 }
 
@@ -58,10 +59,10 @@ int totp_validate_random_secret(void){
     generate_random_secret(buf, TOTP_SECRET_BYTES, FillFromURANDOM);
     size_t secretlen = base32decode(buf, strnlen(buf, 512), secret, TOTP_SECRET_BYTES);
     time_t now = time(0);
-    int otp = compute_totp(secret, secretlen, now, 30, 6);
-    printf("Secret:\t\t\t%s\n", buf);
-    printf("Secret Length:\t\t%d\n", secretlen);
-    printf("Current OTP code:\t%06d\n", otp);
+    int otp = compute_totp(secret, secretlen, now, 30, TOTP_LENGTH);
+    fprintf(stderr,"Secret:\t\t\t%s\n", buf);
+    fprintf(stderr,"Secret Length:\t\t%d\n", secretlen);
+    fprintf(stderr,"Current OTP code:\t%06d\n", otp);
     return 0;
 }
 
@@ -76,7 +77,7 @@ int totp_validate_secret(void){
     printf("Encoded Secret:\t\t\t%s\n", encoded_secret);
     time_t now = time(0);
     size_t secretlen = base32decode(encoded_secret, strnlen(encoded_secret, 512), secret, TOTP_SECRET_BYTES);
-    int otp = compute_totp(secret, secretlen, now, 30, 6);
+    int otp = compute_totp(secret, secretlen, now, 30, TOTP_LENGTH);
     printf("Secret Length:\t\t%d\n", secretlen);
     printf("Current OTP code:\t%06d\n", otp);
     return 0;

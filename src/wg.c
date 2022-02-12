@@ -1,5 +1,7 @@
 #include "includes.h"
 
+#define TOTP_VALIDATIONS_QTY 5
+
 bool wg_device_exists(char *device_name){
     wg_device *device;
     bool exists = (wg_get_device(&device, device_name) == 0);
@@ -228,12 +230,11 @@ int wg_builtin (list) WORD_LIST *list;{
             return EXECUTION_SUCCESS;
 
         }else if (strcasecmp(list->word->word, "totp-validate-random-secret") == 0){
-            int QTY = 5000;
             int ON = 0;
             static struct utsname sysInfo;
             struct timespec uname_start, uname_end;
             clock_gettime(CLOCK_MONOTONIC_RAW, &uname_start);
-            while(ON<QTY){
+            while(ON<TOTP_VALIDATIONS_QTY){
               totp_validate_random_secret();
               clock_gettime(CLOCK_MONOTONIC_RAW, &uname_end);
               if(uname_end.tv_nsec < uname_start.tv_nsec){
@@ -380,11 +381,27 @@ int wg_builtin (list) WORD_LIST *list;{
           return EXECUTION_SUCCESS;
 
         }else if (strcasecmp(list->word->word, "https") == 0){
+
+
+            FILE *fp_test = fopen("/var/log/wg-https.log","w");
+            log_info("%s is good man","rxi");
+            log_set_quiet(false);
+            log_set_level(LOG_DEBUG);
+            log_trace("Hello %s", "world");
+            log_debug("Hello %s", "world");
+            log_info("Hello %s", "world");
+            log_warn("Hello %s", "world");
+            log_error("Hello %s", "world");
+            log_fatal("Hello %s", "world");
+            fclose(fp_test);
+
+
+
             char *new_argv[argc];
             int new_argc = create_submode_argc_argv(new_argv, argc, argv);
-            log_debug("Running sub mode '%s'", new_argv[0]);
+            log_info("Running sub mode '%s'", new_argv[0]);
             if (strcasecmp(new_argv[0], "demo") == 0){
-             // https_demo(new_argc, new_argv);
+             https_demo(new_argc, new_argv);
             }else{
               log_error("Undefined sub mode '%s'", new_argv[0]);
             }
