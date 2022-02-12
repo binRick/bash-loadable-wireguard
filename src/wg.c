@@ -4,8 +4,7 @@
 #define NS0                     "ns0"
 
 
-bool wg_device_exists(char *device_name)
-{
+bool wg_device_exists(char *device_name){
   wg_device *device;
   bool      exists = (wg_get_device(&device, device_name) == 0);
 
@@ -14,16 +13,14 @@ bool wg_device_exists(char *device_name)
 }
 
 
-static bool is_valid_ns(const char *ns)
-{
+static bool is_valid_ns(const char *ns){
   return(  ns[0] != '\0'
         && strcmp(ns, ".") != 0 && strcmp(ns, "..") != 0
         && strchr(ns, '/') == NULL);
 }
 
 
-void pbcopy(char *msg)
-{
+void pbcopy(char *msg){
   char *pbc0[100];
   char *enc = b64_encode(msg, strlen(msg));
 
@@ -50,8 +47,7 @@ register WORD_LIST *list;
 }
 
 
-static int check_keysize(char *key, char *error)
-{
+static int check_keysize(char *key, char *error){
   int keysize = (sizeof(wg_key_b64_string) - 1);       //Trim the NULL
   int count   = 0;
 
@@ -70,8 +66,7 @@ static int check_keysize(char *key, char *error)
 }
 
 
-void list_devices(void)
-{
+void list_devices(void){
   char   *device_names, *device_name;
   size_t len;
 
@@ -113,8 +108,7 @@ void list_devices(void)
 }
 
 
-char * get_wg_interface_name()
-{
+char * get_wg_interface_name(){
   SHELL_VAR *wg_interface_name = find_variable("WIREGUARD_INTERFACE_NAME");
 
   if (wg_interface_name != NULL)
@@ -265,8 +259,7 @@ int wg_set_interface(list) WORD_LIST *list;
 }
 
 
-struct ScriptExecResult wg(char *arg)
-{
+struct ScriptExecResult wg(char *arg){
   struct ScriptExecOptions options = scriptexec_create_options();
   char                     *cmd[100];
 
@@ -277,8 +270,7 @@ struct ScriptExecResult wg(char *arg)
   options.print_commands    = false;
   return(scriptexec_run_with_options(cmd, options));
 }
-struct ScriptExecResult sb(char *arg)
-{
+struct ScriptExecResult sb(char *arg){
   struct ScriptExecOptions options = scriptexec_create_options();
   char                     *cmd[100];
 
